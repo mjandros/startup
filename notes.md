@@ -11,9 +11,8 @@
 ## Git Basics
 
 After making changes from terminal:
-
+```
 git add --all
-
 git commit -m "message"
-
 git push
+```
