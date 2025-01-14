@@ -4,16 +4,13 @@
 
 ## 🚀 Specification Deliverable
 
-> [!NOTE]
->  Fill in this sections as the submission artifact for this deliverable. You can refer to this [example](https://github.com/webprogramming260/startup-example/blob/main/README.md) for inspiration.
-
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
 - [x] Proper use of Markdown - done
 - [x] A concise and compelling elevator pitch - inshallah it is compelling
-- [ ] Description of key features
-- [ ] Description of how you will use each technology
-- [x] One or more rough sketches of your application. Images must be embedded in this file using Markdown image references. - Included mock images of the login page and the game itself.
+- [x] Description of key features - listed the main points of the application's functionality
+- [x] Description of how you will use each technology - done
+- [x] One or more rough sketches of your application. Images must be embedded in this file using Markdown image references. - Included mock images of the login page and the game itself, plus an example of users' interactions with the server.
 
 ### Elevator pitch
 
@@ -31,27 +28,36 @@ In-game view:
 
 ```mermaid
 sequenceDiagram
-    actor You
-    actor Website
-    You->>Website: Replace this with your design
+    actor Player1
+    actor Player2
+    actor Player3
+    actor Server
+    Player1->>Server: Player1 wallet + $400
+    Server->>Player2: Player1 wallet + $400
+    Server->>Player3: Player1 wallet + $400
+    Player3->>Server: Player3 wallet - $750
+    Server->>Player1: Player3 wallet - $750
+    Server->>Player2: Player3 wallet - $750
 ```
 
 ### Key features
 
-- Describe your key feature
-- Describe your key feature
-- Describe your key feature
+- Secure login
+- Starting wallet of 1000 (fake) dollars
+- Ability to play blackjack against an automated dealer
+- Official game rules and options
+- Leaderboard to compare your total earnings to those of other players
 
 ### Technologies
 
 I am going to use the required technologies in the following ways.
 
-- **HTML** - Description here
-- **CSS** - Description here
-- **React** - Description here
-- **Service** - Description here
-- **DB/Login** - Description here
-- **WebSocket** - Description here
+- **HTML** - Basic structure of app. This includes the login page, the game, and the leaderboard.
+- **CSS** - Styling to match the rough draft displayed in the mock design above.
+- **React** - Login and gameplay functionality; which action the user takes.
+- **Service** - Deck of cards API (https://deckofcardsapi.com/) that tracks cards used and displays cards in play.
+- **DB/Login** - Receives player's earnings/losses after each game and updates their wallet.
+- **WebSocket** - Display of other players' earnings in the leaderboard.
 
 ## 🚀 AWS deliverable
 
