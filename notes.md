@@ -60,3 +60,33 @@ Other:
 <aside> ... </aside>
 <footer> ... </footer
 ```
+
+## HTML Input
+
+Label:
+```
+<label for="idOfInput">Label Text</label>
+```
+Input:
+```
+<input type="inputType" name="inputName" id="inputID" value="initialValue" />
+```
+Types:
+| Type             | Unique Attributes             |
+| ---------------- | ----------------------------- |
+| `text`           | placeholder, required pattern |
+| `password`       |                               |
+| `email`          |                               |
+| `tel`            | placeholder, pattern          |
+| `url`            |                               |
+| `number`         | min, max, step                |
+| `checkbox`       | checked                       |
+| `radio`          | checked                       |
+| `range`          | min, max, step                |
+| `date`           |                               |
+| `datetime-local` |                               |
+| `month`          |                               |
+| `week`           |                               |
+| `color`          |                               |
+| `file`           |                               |
+| `submit`         |                               |
