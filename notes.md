@@ -39,15 +39,23 @@ List:
 Table:
 ```
 <table>
-    <tr>
-        <th>Upper Left</th>
-        <th>Upper Right</th>
-    </tr>
-    <tr>
-        <th>Lower Left</th>
-        <th>Lower Right</th>
-    </tr>
-<table>
+    <thead>
+        <tr>
+            <th>Header 1</th>
+            <th>Header 2</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Entry</td>
+            <td>Entry</td>
+        </tr>
+        <tr>
+            <td>Entry</td>
+            <td>Entry</td>
+        </tr>
+    </tbody>
+</table>
 ```
 Other:
 ```
