@@ -19,11 +19,24 @@
             <hr />
         </header>
         <main>
+            <p>Welcome, example-player.</p>
             <div>
                 <label for="wallet">Your Wallet: $</label>
                 <input type="text" id="wallet" value="1000" readonly />
-                <label for="wager">Current Wager: $</label>
-                <input type="text" id="wager" value="200" readonly />                
+            </div>
+            <ul class="notification">
+                <li class="player-name">Don just earned $700!</li>
+                <li class="player-name">Michael just lost $2500.</li>
+                <li class="player-name">Nicolas is now in debt.</li>
+              </ul>
+            <div>
+                <form>
+                    <div>
+                        <label for="wager">Your Wager:</label>
+                        <input id="wager" type="number" min="1" />
+                        <button type="submit">Place</button>
+                    </div>
+                </form>               
             </div>
             <br />
             <canvas id="deck" width="150" height="225" style="border: 3px solid #000000"></canvas>
