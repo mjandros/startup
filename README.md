@@ -63,21 +63,21 @@ I am going to use the required technologies in the following ways.
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Server deployed and accessible with custom domain name** - [My server link](https://yourdomainnamehere.click).
+- [x] **Server deployed and accessible with custom domain name** - [My server link](https://blackjackonline.click).
 
 ## 🚀 HTML deliverable
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **HTML pages** - I did not complete this part of the deliverable.
-- [ ] **Proper HTML element usage** - I did not complete this part of the deliverable.
-- [ ] **Links** - I did not complete this part of the deliverable.
-- [ ] **Text** - I did not complete this part of the deliverable.
-- [ ] **3rd party API placeholder** - I did not complete this part of the deliverable.
-- [ ] **Images** - I did not complete this part of the deliverable.
-- [ ] **Login placeholder** - I did not complete this part of the deliverable.
-- [ ] **DB data placeholder** - I did not complete this part of the deliverable.
-- [ ] **WebSocket placeholder** - I did not complete this part of the deliverable.
+- [x] **HTML pages** - Added HTML pages for Home, Play, Leaderboard, and Rules.
+- [x] **Proper HTML element usage** - I completed this part of the deliverable.
+- [x] **Links** - I completed this part of the deliverable.
+- [x] **Text** - I completed this part of the deliverable.
+- [x] **3rd party API placeholder** - Added images to represent cards on Play page.
+- [x] **Images** - Added site icon.
+- [x] **Login placeholder** - I completed this part of the deliverable.
+- [x] **DB data placeholder** - Included Leaderboard page.
+- [x] **WebSocket placeholder** - Included notifications on Play page.
 
 ## 🚀 CSS deliverable
 
