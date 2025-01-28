@@ -26,12 +26,40 @@
                 <input type="text" id="wager" value="200" readonly />                
             </div>
             <br />
+            <canvas id="deck" width="150" height="225" style="border: 3px solid #000000"></canvas>
+            <canvas id="card1" width="150" height="225" style="border: 1px solid #000000"></canvas>
+            <canvas id="card2" width="150" height="225" style="border: 1px solid #000000"></canvas>
+            <br />
+            <label for="total">Current Total:</label>
+            <input type="text" id="total" value="17" readonly />
+            <br />
             <div>
                 <button>Hit</button>
                 <button>Stand</button>
                 <button>Double Down</button>
                 <button>Surrender</button>
             </div>
+            <br />
+            <canvas id="space" width="150" height="225" style="border: 1px solid #FFFFFF"></canvas>
+            <canvas id="card3" width="150" height="225" style="border: 1px solid #000000"></canvas>
+            <canvas id="card4" width="150" height="225" style="border: 1px solid #000000"></canvas>
+            <script>
+                var ctx = document.getElementById("deck").getContext("2d");
+                ctx.font = "30px Arial";
+                ctx.fillText("Deck", 10, 50);
+                ctx = document.getElementById("card1").getContext("2d");
+                ctx.font = "30px Arial";
+                ctx.fillText("Card", 10, 50);
+                ctx = document.getElementById("card2").getContext("2d");
+                ctx.font = "30px Arial";
+                ctx.fillText("2", 10, 50);
+                ctx = document.getElementById("card3").getContext("2d");
+                ctx.font = "30px Arial";
+                ctx.fillText("K", 10, 50);
+                ctx = document.getElementById("card4").getContext("2d");
+                ctx.font = "30px Arial";
+                ctx.fillText("7", 10, 50);
+            </script>
         </main>
         <footer>
             <hr />
