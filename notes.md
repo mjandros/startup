@@ -98,3 +98,46 @@ Types:
 | `color`          |                               |
 | `file`           |                               |
 | `submit`         |                               |
+
+## CSS Basics
+
+Global Properties:
+```
+color (text)
+font-family
+font-weight
+font-size
+font-style
+text-align
+background (color)
+border-radius
+border
+padding
+margin
+animation-name
+animation-duration
+```
+
+Functions:
+```
+* { } // Applies to all HTML aspects
+head { }
+body { }
+header { }
+main { }
+footer { }
+section:nth-child(n) { }
+li {list-style}
+h1 { }
+h2 { }
+#table-data {width}
+td { }
+th { }
+@keyframes animation-name {
+    0% {
+        transform: translateX(%)
+    }
+    50% { }
+    100% { }
+}
+```
