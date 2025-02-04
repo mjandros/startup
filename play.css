@@ -1,11 +1,5 @@
-/*header {
-    background-color: black;
-    margin: 0em;
-    padding: 1em;
-}*/
-
-a {
-    background-color: white;
+header a {
+    background-color: lightgray;
     border-radius: 5px;
     padding: 0.4em;
     margin: 0.4em;
@@ -15,15 +9,46 @@ header {
     flex: 0 80px;
 }
 
-p {
-    margin: 0;
-}
-
 body {
     background-color: green;
     display: flex;
     flex-direction: column;
     min-width: 375px;
+}
+
+section:nth-child(1) {
+    flex: 0.25;
+    margin: 0;
+}
+
+section:nth-child(1) section {
+    width: 400px;
+    flex-shrink: 0;
+    margin: 1em;
+    background-color: lightgray;
+    border-radius: 5px;
+    padding: 0.5em;
+}
+
+section:nth-child(2) {
+    flex: 2;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+section:nth-child(3) > div {
+    display: flex;
+    gap: 1em;
+}
+
+section:nth-child(3) > input {
+    width: 50px;
+}
+
+@media (orientation: portrait) {
+    main {
+      flex-direction: column;
+    }
 }
 
 h1 {
@@ -33,9 +58,9 @@ h1 {
 main {
     flex: 1 calc(100vh - 110px);
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 4em;
 }
 
 input {
@@ -48,16 +73,17 @@ input {
 
 button {
     margin: 0.5em;
-    width: 75px;
-    height: 35px;
-}
-
-div {
-    text-align: center;
+    width: 90px;
+    height: 45px;
 }
 
 footer {
     flex: 0 30px;
+}
+
+canvas {
+    width: 150;
+    height: 225;
 }
 
 menu {
@@ -70,12 +96,18 @@ menu {
 .navbar-brand {
     padding-left: 0.3em;
     border-bottom: solid rgb(182, 182, 182) thin;
-  }
+}
   
   menu .nav-item {
     padding: 0 0.3em;
-  }
+}
+
   
   footer a {
     float: right;
-  }
+}
+
+  footer p {
+    margin: 0;
+    text-align: end;
+}
