@@ -109,13 +109,14 @@ font-weight
 font-size
 font-style
 text-align
-background (color)
+background-color
 border-radius
 border
 padding
 margin
 animation-name
 animation-duration
+height, width
 ```
 
 Functions:
@@ -130,7 +131,7 @@ section:nth-child(n) { }
 li {list-style}
 h1 { }
 h2 { }
-#table-data {width}
+table { }
 td { }
 th { }
 @keyframes animation-name {
