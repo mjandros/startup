@@ -77,3 +77,6 @@ menu {
     float: right;
   }
 
+  footer p {
+    text-align: end;
+  }
