@@ -83,12 +83,12 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Header, footer, and main content body** - I did not complete this part of the deliverable.
-- [ ] **Navigation elements** - I did not complete this part of the deliverable.
-- [ ] **Responsive to window resizing** - I did not complete this part of the deliverable.
-- [ ] **Application elements** - I did not complete this part of the deliverable.
-- [ ] **Application text content** - I did not complete this part of the deliverable.
-- [ ] **Application images** - I did not complete this part of the deliverable.
+- [x] **Header, footer, and main content body** - The header and footer are hidden on the login page but are visible throughout the rest of the site.
+- [x] **Navigation elements** - From the home page, the login buttons will bring the user to the play page. From there, they can navigate freely using the menu in the header.
+- [x] **Responsive to window resizing** - I completed this part of the deliverable.
+- [x] **Application elements** - I completed this part of the deliverable.
+- [x] **Application text content** - I completed this part of the deliverable.
+- [x] **Application images** - I completed this part of the deliverable.
 
 ## 🚀 React part 1: Routing deliverable
 
