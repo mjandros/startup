@@ -35,6 +35,7 @@ main {
 table {
     width: 500px;
     background: lightgray;
+    color: black;
 }
 
 td {
@@ -73,10 +74,10 @@ menu {
     padding: 0 0.3em;
   }
   
-  footer a {
+  /* footer a {
     float: right;
   }
 
   footer p {
     text-align: end;
-  }
+  } */

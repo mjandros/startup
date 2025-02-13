@@ -4,12 +4,12 @@
     padding: 1em;
 }*/
 
-a {
+/* a {
     background-color: white;
     border-radius: 5px;
     padding: 0.4em;
     margin: 0.4em;
-}
+} */
 
 header {
     flex: 0 80px;
@@ -26,9 +26,13 @@ p {
     min-width: 375px;
 }
 
-h1 {
+/* h1 {
     text-align: center;
-}
+} */
+
+/* span {
+  text-align: start;
+} */
 
 main {
     flex: 1 calc(100vh - 110px);
@@ -52,9 +56,9 @@ button {
     height: 35px;
 }
 
-div {
+/* div {
     text-align: center;
-}
+} */
 
 footer {
     flex: 0 30px;
