@@ -1,11 +1,12 @@
 import React from 'react';
+import './login.css';
 
 export function Login() {
   return (
     <main>
             <div>
-                <h1>Blackjack</h1>
-                <form method="get" action="play.html">
+                <h1 className="title">Blackjack</h1>
+                <form method="get" action="play">
                     <div>
                     <input type="text" placeholder="Email" />
                     </div>
