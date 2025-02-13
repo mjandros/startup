@@ -80,7 +80,7 @@ menu {
     float: right;
   }
   
-  @media (max-height: 600px) {
+  /* @media (max-height: 600px) {
     header {
       display: none;
     }
@@ -90,4 +90,4 @@ menu {
     main {
       flex: 1 75vh;
     }
-  }
+  } */
