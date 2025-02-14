@@ -3,7 +3,7 @@ import './login.css';
 
 export function Login() {
   return (
-    <main>
+    <main className="otherMain">
             <div>
                 <h1 className="title">Blackjack</h1>
                 <form method="get" action="play">

@@ -9,45 +9,46 @@ header {
     flex: 0 80px;
 }
 
-body {
+.body {
     background-color: green;
-    display: flex;
-    flex-direction: column;
+    display: flex !important;
+    flex-direction: column !important;
     min-width: 375px;
 }
 
-section:nth-child(1) {
-    flex: 0.25;
-    margin: 0;
-}
-
-section:nth-child(1) section {
-    width: 400px;
+.left {
+    flex: 0.25 !important;
     flex-shrink: 0;
     margin: 1em;
-    background-color: lightgray;
+    background: rgb(86, 89, 93) !important;
     border-radius: 5px;
     padding: 0.5em;
 }
 
-section:nth-child(2) {
-    flex: 2;
-    max-width: 600px;
+.right {
+    flex: 0.75;
+    flex-shrink: 0;
+    margin: 1em;
+    background: rgb(86, 89, 93) !important;
+    border-radius: 5px;
+    padding: 0.5em;
+}
+
+.sub {
+    flex: 1;
     margin: 0 auto;
-}
-
-section:nth-child(3) > div {
-    display: flex;
-    gap: 1em;
-}
-
-section:nth-child(3) > input {
-    width: 50px;
+    background: lightgray !important;
+    align-items: left;
+    margin: 1em;
+    max-width: 370px !important;
+    min-width: 370px;
+    border-radius: 5px;
+    padding: 0.5em;
 }
 
 @media (orientation: portrait) {
-    main {
-      flex-direction: column;
+    .playMain {
+      flex-direction: column !important;
     }
 }
 
@@ -55,11 +56,11 @@ h1 {
     text-align: center;
 }
 
-main {
+.playMain {
     flex: 1 calc(100vh - 110px);
     display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
+    flex-direction: row !important;
+    justify-content: flex-start !important;
     gap: 4em;
 }
 
@@ -71,11 +72,22 @@ input {
     padding: 0.5em;
 }
 
+.input-group-text {
+    height: 40px;
+}
+
+.input-group {
+    align-items: center;
+}
+
 button {
     margin: 0.5em;
     width: 90px;
-    height: 45px;
+    height: 55px;
+    line-height: normal;
+    vertical-align: middle;
 }
+
 
 footer {
     flex: 0 30px;
@@ -89,7 +101,7 @@ canvas {
 menu {
     flex: 1;
     display: flex;
-    flex-direction: row !important;
+    flex-direction: row;
     list-style: none;
 }
 
@@ -110,4 +122,30 @@ menu {
   footer p {
     margin: 0;
     text-align: end;
+}
+
+.deck {
+    display: inline-block;
+    height: 140px;
+    width: 95px;
+    background-color: #4476AD;
+    border: solid thick black;
+    margin: 0.5em;
+}
+
+.card {
+    display: inline-block;
+    height: 140px;
+    width: 95px;
+    background-color: #4476AD;
+    border: solid thin black;
+    margin: 0.5em;
+}
+
+.space {
+    display: inline-block;
+    height: 140px;
+    width: 95px;
+    background: rgb(86, 89, 93) !important;
+    margin: 0.5em;
 }

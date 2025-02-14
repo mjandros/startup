@@ -20,7 +20,7 @@ body {
     min-width: 375px;
 }
 
-section {
+.section {
     border-radius: 5px;
     background-color: lightgray;
     margin: 0.5em;

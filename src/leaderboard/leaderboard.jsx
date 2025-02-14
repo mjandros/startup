@@ -3,7 +3,7 @@ import './leaderboard.css';
 
 export function Leaderboard() {
   return (
-    <main>
+    <main className="otherMain">
             <table>
                 <thead>
                     <th>Rank</th>

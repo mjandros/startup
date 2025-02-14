@@ -14,7 +14,7 @@ export default function App() {
         <header className="container-fluid">
           <nav className="navbar fixed-top navbar-dark">
             <div className="navbar-brand">
-              Simon<sup>&reg;</sup>
+              Blackjack
             </div>
             <menu className="navbar-nav">
               <li className="nav-item">
@@ -44,7 +44,7 @@ export default function App() {
         <footer className="bg-dark text-white-50">
           <div className="container-fluid">
             <span className="text-reset"> Max Andros</span>
-            <a className="text-reset" href="https://github.com/webprogramming260/simon-react">
+            <a className="text-reset" href="https://github.com/mjandros/startup">
               Source
             </a>
           </div>

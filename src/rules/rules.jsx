@@ -3,15 +3,15 @@ import './rules.css';
 
 export function Rules() {
   return (
-    <main>
-            <section className="intro">
+    <main className="otherMain">
+            <section className="section">
                 <p className="intro-text">
                     Blackjack is a classic casino game in which the player opposes the dealer rather than other players. 
                     The goal is to get a hand whose total is as close as possible to 21 without surpassing it. A hand equal to exactly 21 is called a Blackjack.
                 </p>
             </section>
 
-            <section>
+            <section className="section">
                 <h1>How to Play</h1>
                 <p>
                     Before receiving your hand, you must place a wager, which draws money out of your wallet. 
@@ -27,7 +27,7 @@ export function Rules() {
                 </p>
             </section>
 
-            <section>
+            <section className="section">
                 <h2>Basic Moves</h2>
                 <ul>
                     <li><b><u>Hit</u></b>: Receive another card.</li>
@@ -47,7 +47,7 @@ export function Rules() {
                 </p>
             </section>
 
-            <section>
+            <section className="section">
                 <h1>Card Values</h1>
                 <p>
                     Any numbered card (2-10) has a value equal to its number. Any face card has a value of 10. 
@@ -56,7 +56,7 @@ export function Rules() {
                 </p>
             </section>
 
-            <section>
+            <section className="section">
                 <h1>Dealer Rules</h1>
                 <p>
                     The dealer must play by a specific set of rules. They can make no special moves (double down, surrender, or split). 
