@@ -88,6 +88,10 @@ menu {
   footer a {
     float: right;
   }
+
+  footer span {
+    float: left;
+  }
   
   /* @media (max-height: 600px) {
     header {
