@@ -94,9 +94,9 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [x] **Bundled using Vite** - I completed this part of the deliverable.
-- [x] **Components** - Replaced all component .html files with .jsx files that use React.
-- [x] **Router** - All pages on the site can be reached by logging in or using the nav bar.
+- [x] **Bundled using Vite** - I installed and configured Vite using NPM and tested throughout construction using the "npm run dev" command to bundle code to a temporary directory. After construction, I used Vite to fully build and deploy the code.
+- [x] **Components** - Replaced all component .html files with .jsx files that use React. Updated certain visuals and layouts to better fit the design.
+- [x] **Router** - All pages on the site can be reached using the nav bar. The user can also navigate from the Login page to the Play page using the "Login" and "Create" buttons.
 
 ## 🚀 React part 2: Reactivity
 
