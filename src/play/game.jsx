@@ -8,12 +8,26 @@ import './play.css';
 export function BlackjackGame(props) {
    const userName = props.userName;
    const [numCards, setNumCards] = React.useState(0);
+   const [numDealerCards, setNumDealerCards] = React.useState(0);
    const [values, setValues] = React.useState([0]);
+   const [dealerValues, setDealerValues] = React.useState([0]);
    const [total, setTotal] = React.useState(0);
-   const [status, setStatus] = React.useState("");
+   const [dealerTotal, setDealerTotal] = React.useState(0);
+   const [status, setStatus] = React.useState("Place wager");
+   const [ready, setReady] = React.useState(false);
+   const [wager, setWager] = React.useState(1);
+   const [wallet, setWallet] = React.useState(1000);
 
-  function updateValue(index, newVal) {
+  function updateValues(index, newVal) {
     setValues((prevValues) => {
+        const updatedValues = [...prevValues];
+        updatedValues[index] = newVal;
+        return updatedValues;
+    });
+  }
+
+  function updateDealerValues(index, newVal) {
+    setDealerValues((prevValues) => {
         const updatedValues = [...prevValues];
         updatedValues[index] = newVal;
         return updatedValues;
@@ -25,6 +39,11 @@ export function BlackjackGame(props) {
     setNumCards(updatedNum);
   }
 
+  function updateNumDealerCards(prevNum) {
+    const updatedNum = prevNum + 1;
+    setNumDealerCards(updatedNum);
+  }
+
   function updateTotal() {
     let newTotal = 0;
     for (const val of values) {
@@ -32,16 +51,29 @@ export function BlackjackGame(props) {
     }
     const updatedTotal = newTotal;
     setTotal(updatedTotal);
-    
+  }
+
+  function updateDealerTotal() {
+    let newTotal = 0;
+    for (const val of dealerValues) {
+        newTotal += val;
+    }
+    const updatedTotal = newTotal;
+    setDealerTotal(updatedTotal);
   }
 
   function updateStatus() {
     let newStatus = "";
     if (total == 21) {
         newStatus = "Blackjack!";
+        setReady(false);
     }
     else if (total > 21) {
         newStatus = "Bust!";
+        setReady(false);
+    }
+    if (!ready) {
+        newStatus = "Place wager";
     }
     const updatedStatus = newStatus;
     setStatus(updatedStatus);
@@ -52,10 +84,39 @@ export function BlackjackGame(props) {
   }, [values]);
 
   React.useEffect(() => {
+    updateDealerTotal();
+  }, [dealerValues]);
+
+  React.useEffect(() => {
     updateStatus();
   }, [total]);
 
+  React.useEffect(() => {
+    startGame();
+  }, [status]);
+
+  function placeWager() {
+    if (wager > wallet || wager < 1) {
+        return;
+    }
+    setReady(true);
+    setStatus();
+  }
+
+  function startGame() {
+    if (!ready) {
+        return;
+    }
+    dealCard();
+    dealCard();
+    dealDealerCard();
+    dealDealerCard();
+  }
+
   function dealCard() {
+    if (!ready) {
+        return;
+    }
     updateNumCards(numCards);
     const space = document.getElementById((numCards + 1).toString());
     if (space.classList.contains("empty")) {
@@ -66,7 +127,21 @@ export function BlackjackGame(props) {
     while (!isValid(val)) {
         val = getRandomValue();
     }
-    updateValue(numCards, val);
+    updateValues(numCards, val);
+  }
+
+  function dealDealerCard() {
+    updateNumDealerCards(numDealerCards);
+    const space = document.getElementById("d" + (numCards + 1).toString());
+    if (space.classList.contains("empty")) {
+        space.classList.replace("empty", "space");
+    }
+    space.classList.replace("space", "card")
+    let val = getRandomValue();
+    while (!isValid(val)) {
+        val = getRandomValue();
+    }
+    updateDealerValues(numDealerCards, val);
   }
 
   function getRandomValue() {
@@ -75,8 +150,13 @@ export function BlackjackGame(props) {
 
   function isValid(val) {
     let count = 0;
-    for (let i = 0; i < values.length; i++) {
-        if (values[i] == val) {
+    for (const num of values) {
+        if (num == val) {
+            count++;
+        }
+    }
+    for (const num of dealerValues) {
+        if (num == val) {
             count++;
         }
     }
@@ -101,10 +181,51 @@ export function BlackjackGame(props) {
   }
 
   return (
-    <section className="right">
+    <main className="playMain">
+            <section className="left">
+                <section className="sub">
+                    <p>Welcome, {userName}.</p>
+                    <br />
+                    <label for="wallet">Your Wallet:</label>
+                    <div className="input-group mb-3">
+                        <span className="input-group-text">$</span>
+                        <input type="text" id="wallet" value="1000" readonly />
+                    </div>
+                </section>
+                <section className="sub">
+                    <ul className="notification">
+                        <li className="player-name">Don just earned $700!</li>
+                        <li className="player-name">Michael just lost $2500.</li>
+                        <li className="player-name">Nicolas is now in debt.</li>
+                    </ul>
+                </section>
+                <section className="sub">
+                    <div>
+                            <div>
+                                <label for="wager">Your Wager:</label>
+                                <div className="input-group mb-3">
+                                    <span className="input-group-text">$</span>
+                                    <input id="wager" type="number" min="1" max={wallet} defaultValue="1" onChange={(e) => setWager(Number(e.target.value))} disabled={ready}/>
+                                </div>
+                                <button onClick={placeWager}>Place</button>
+                            </div>
+                    </div>
+                </section>
+            </section>
+            <br />
+            <section className="right">
                 <p className="deck"></p>
-                <p className="card"></p>
-                <p className="card"></p>
+                <p className="empty" id="d1">{!ready && <span>{dealerValues[0]}</span>}</p>
+                <p className="empty" id="d2">{dealerValues[1]}</p>
+                <p className="empty" id="d3">{dealerValues[2]}</p>
+                <p className="empty" id="d4">{dealerValues[3]}</p>
+                <p className="empty" id="d5">{dealerValues[4]}</p>
+                <p className="empty" id="d6">{dealerValues[5]}</p>
+                <p className="empty" id="d7">{dealerValues[6]}</p>
+                <p className="empty" id="d8">{dealerValues[7]}</p>
+                <p className="empty" id="d9">{dealerValues[8]}</p>
+                <p className="empty" id="d10">{dealerValues[9]}</p>
+                <p className="empty" id="d11">{dealerValues[10]}</p>
                 <br />
                 <div>
                     <button onClick={dealCard}>Hit</button>
@@ -127,6 +248,8 @@ export function BlackjackGame(props) {
                 <div className="empty" id="9">{values[8]}</div>
                 <div className="empty" id="10">{values[9]}</div>
                 <div className="empty" id="11">{values[10]}</div>
-            </section>
+            </section>   
+        </main>
+
   );
 }
