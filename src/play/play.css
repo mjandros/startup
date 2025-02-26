@@ -131,6 +131,8 @@ menu {
     background-color: #4476AD;
     border: solid thick black;
     margin: 0.5em;
+    line-height: normal;
+    vertical-align: middle;
 }
 
 .card {
@@ -140,6 +142,10 @@ menu {
     background-color: #4476AD;
     border: solid thin black;
     margin: 0.5em;
+    line-height: normal;
+    vertical-align: middle;
+    font-size: 30px;
+    color: black;
 }
 
 .space {
@@ -148,4 +154,15 @@ menu {
     width: 95px;
     background: rgb(86, 89, 93) !important;
     margin: 0.5em;
+    line-height: normal;
+    vertical-align: middle;
+    color: rgb(86, 89, 93);
+}
+
+.empty {
+    color: rgb(86, 89, 93);
+}
+
+.status {
+    font-size: 25;
 }

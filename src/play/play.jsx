@@ -1,7 +1,9 @@
 import React from 'react';
 import './play.css';
+import { BlackjackGame } from './game';
 
-export function Play() {
+
+export function Play(props) {
   return (
     <main className="playMain">
             <section className="left">
@@ -36,26 +38,8 @@ export function Play() {
                     </div>
                 </section>
             </section>
-            <br />
-            <section className="right">
-                <p className="deck"></p>
-                <p className="card"></p>
-                <p className="card"></p>
-                <br />
-                <div>
-                    <button>Hit</button>
-                    <button>Stand</button>
-                    <button>Double Down</button>
-                    <button>Surrender</button>
-                </div>
-                <br />
-                    <label for="total">Current Total:</label>
-                    <input type="text" id="total" value="17" readonly />                    
-                <br />
-                <div className="space"></div>
-                <div className="card"></div>
-                <div className="card"></div>
-            </section>
+            <br />   
+            <BlackjackGame userName={props.userName} />
         </main>
   );
 }
