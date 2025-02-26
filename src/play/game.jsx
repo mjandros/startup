@@ -17,6 +17,7 @@ export function BlackjackGame(props) {
    const [ready, setReady] = React.useState(false);
    const [wager, setWager] = React.useState(1);
    const [wallet, setWallet] = React.useState(1000);
+   const [firstTurn, setFirstTurn] = React.useState(true);
 
   function updateValues(index, newVal) {
     setValues((prevValues) => {
@@ -44,6 +45,11 @@ export function BlackjackGame(props) {
     setNumDealerCards(updatedNum);
   }
 
+  function updateWallet(value) {
+    const updatedValue = value;
+    setWallet(updatedValue);
+  }
+
   function updateTotal() {
     let newTotal = 0;
     for (const val of values) {
@@ -62,8 +68,7 @@ export function BlackjackGame(props) {
     setDealerTotal(updatedTotal);
   }
 
-  function updateStatus() {
-    let newStatus = "";
+  function updateStatus(newStatus) {
     if (total == 21) {
         newStatus = "Blackjack!";
         setReady(false);
@@ -88,7 +93,7 @@ export function BlackjackGame(props) {
   }, [dealerValues]);
 
   React.useEffect(() => {
-    updateStatus();
+    updateStatus("");
   }, [total]);
 
   React.useEffect(() => {
@@ -107,6 +112,7 @@ export function BlackjackGame(props) {
     if (!ready) {
         return;
     }
+    setFirstTurn(true);
     dealCard();
     dealCard();
     dealDealerCard();
@@ -166,6 +172,32 @@ export function BlackjackGame(props) {
     return true;
   }
 
+  function hit() {
+    if (!ready) {
+        return;
+    }
+    setFirstTurn(false);
+    dealCard();
+  }
+
+  function stand() {
+    setReady(false);
+  }
+  
+  function doubleDown() {
+    setFirstTurn(false);
+    const input = document.getElementById("wager");
+    input.disabled = false;
+    input.value = wager * 2;
+    input.disabled = true;
+    setWager(wager * 2);
+  }
+
+  function surrender() {
+    updateWallet(wallet - (wager / 2))
+    endGame();
+  }
+
   function bust() {
 
   }
@@ -174,9 +206,27 @@ export function BlackjackGame(props) {
 
   }
 
-
-  async function reset() {
-
+  function endGame() {
+    const input = document.getElementById("wager");
+    input.disabled = false;
+    input.value = 1;
+    setReady(false);
+    for (let i = 1; i <= 11; i++) {
+        const card = document.getElementById(i.toString());
+        const dcard = document.getElementById("d" + i.toString());
+        if (card.classList.contains("card")) {
+            card.classList.replace("card", "empty");
+        }
+        if (dcard.classList.contains("card")) {
+            dcard.classList.replace("card", "empty");
+        }
+    }
+    setValues([0]);
+    setDealerValues([0]);
+    setNumCards(0);
+    setNumDealerCards(0);
+    setTotal(0);
+    setDealerTotal(0);
     GameNotifier.broadcastEvent(userName, GameEvent.Start, {});
   }
 
@@ -189,7 +239,7 @@ export function BlackjackGame(props) {
                     <label for="wallet">Your Wallet:</label>
                     <div className="input-group mb-3">
                         <span className="input-group-text">$</span>
-                        <input type="text" id="wallet" value="1000" readonly />
+                        <input type="text" id="wallet" value={wallet} readonly />
                     </div>
                 </section>
                 <section className="sub">
@@ -228,10 +278,10 @@ export function BlackjackGame(props) {
                 <p className="empty" id="d11">{dealerValues[10]}</p>
                 <br />
                 <div>
-                    <button onClick={dealCard}>Hit</button>
-                    <button>Stand</button>
-                    <button>Double Down</button>
-                    <button>Surrender</button>
+                    {ready && <button onClick={hit}>Hit</button>}
+                    {ready && <button onClick={stand}>Stand</button>}
+                    {ready && firstTurn && <button onClick={doubleDown}>Double Down</button>}
+                    {ready && firstTurn && <button onClick={surrender}>Surrender</button>}
                 </div>
                 <p className="status">{status}</p>
                     <label for="total">Current Total:</label>
