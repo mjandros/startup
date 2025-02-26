@@ -1,7 +1,18 @@
 import React from 'react';
 import './rules.css';
 
+
 export function Rules() {
+    const [header1, setHeader1] = React.useState('data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=');
+    const [header2, setHeader2] = React.useState('Loading...');
+    const [header3, setHeader3] = React.useState('unknown');
+  
+    React.useEffect(() => {
+      setHeader1(`How to Play`);
+      setHeader2('Card Values');
+      setHeader3('Dealer Rules');
+    }, []);
+
   return (
     <main className="otherMain">
             <section className="section">
@@ -12,7 +23,7 @@ export function Rules() {
             </section>
 
             <section className="section">
-                <h1>How to Play</h1>
+                <h1>{header1}</h1>
                 <p>
                     Before receiving your hand, you must place a wager, which draws money out of your wallet. 
                     If you win, you will receive your twice your wager. If you lose, you get nothing back, and your wager is lost. 
@@ -48,7 +59,7 @@ export function Rules() {
             </section>
 
             <section className="section">
-                <h1>Card Values</h1>
+                <h1>{header2}</h1>
                 <p>
                     Any numbered card (2-10) has a value equal to its number. Any face card has a value of 10. 
                     An ace can have a value of either 1 or 11. Upon standing, the ace will be treated as whichever value 
@@ -57,7 +68,7 @@ export function Rules() {
             </section>
 
             <section className="section">
-                <h1>Dealer Rules</h1>
+                <h1>{header3}</h1>
                 <p>
                     The dealer must play by a specific set of rules. They can make no special moves (double down, surrender, or split). 
                     When their turn starts, they reveal their hidden card. If the total is 16 or less, they must hit until it is 17 or more. 
