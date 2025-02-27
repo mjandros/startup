@@ -19,8 +19,8 @@ export function Players(props) {
   function handleGameEvent(event) {
     setEvent((prevEvents) => {
       let newEvents = [event, ...prevEvents];
-      if (newEvents.length > 10) {
-        newEvents = newEvents.slice(1, 10);
+      if (newEvents.length > 5) {
+        newEvents = newEvents.slice(0, 5);
       }
       return newEvents;
     });
@@ -31,9 +31,9 @@ export function Players(props) {
     for (const [i, event] of events.entries()) {
       let message = 'unknown';
       if (event.type === GameEvent.End) {
-        message = `scored ${event.value.score}`;
+        message = event.value.won + ` $${event.value.earnings}`;
       } else if (event.type === GameEvent.Start) {
-        message = `started a new game`;
+        message = `placed a $${event.value.earnings} wager`;
       } else if (event.type === GameEvent.System) {
         message = event.value.msg;
       }
@@ -50,8 +50,6 @@ export function Players(props) {
 
   return (
     <div className='players'>
-      Player
-      <span className='player-name'>{userName}</span>
       <div id='player-messages'>{createMessageArray()}</div>
     </div>
   );

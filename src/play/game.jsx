@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from 'react-bootstrap';
 import { delay } from './delay';
 import { GameEvent, GameNotifier } from './gameNotifier';
+import { Players } from './players';
 import './play.css';
 
 export function BlackjackGame(props) {
@@ -16,12 +17,13 @@ export function BlackjackGame(props) {
    const [status, setStatus] = React.useState("Place wager");
    const [ready, setReady] = React.useState(false);
    const [wager, setWager] = React.useState(1);
-   //const [wallet, setWallet] = React.useState(1000);
    const [wallet, setWallet] = React.useState(() => {
     return parseFloat(localStorage.getItem("wallet")) || 1000;
   });
    const [firstTurn, setFirstTurn] = React.useState(true);
    const [test, setTest] = React.useState("init");
+   const [earnings, setEarnings] = React.useState(0);
+   const [won, setWon] = React.useState("");
 
   function updateValues(index, newVal) {
     setValues((prevValues) => {
@@ -122,11 +124,18 @@ export function BlackjackGame(props) {
     }
   }, [status, dealerTotal]);
 
+  React.useEffect(() => {
+    if (won != ""){
+        endGame();
+    }
+  }, [won]);
+
   function placeWager() {
     if (wager > wallet || wager < 1) {
         return;
     }
     updateWallet(-wager);
+    setEarnings(wager);
     setReady(true);
     setStatus("Your turn");
   }
@@ -135,6 +144,9 @@ export function BlackjackGame(props) {
     if (!ready) {
         return;
     }
+    setWon("");
+    const date = new Date().toLocaleDateString();
+    GameNotifier.broadcastEvent(userName, GameEvent.Start, {name: userName, earnings: wager, date: date, won: won});
     setFirstTurn(true);
     dealCard();
     dealDealerCard();
@@ -221,20 +233,22 @@ export function BlackjackGame(props) {
 
   function surrender() {
     updateWallet(wager / 2)
-    endGame();
+    setEarnings(wager / 2);
+    setWon("lost");
   }
 
   async function bust() {
     setReady(false);
     await delay(2500);
-    endGame();
+    setWon("lost");
   }
 
   async function blackjack() {
     setReady(false);
     await delay(2500);
     updateWallet(wager * 2.5)
-    endGame();
+    setEarnings(wager * 1.5)
+    setWon("won");
   }
 
   async function dealerTurn() {
@@ -248,37 +262,42 @@ export function BlackjackGame(props) {
     else if (dealerTotal == 21) {
         setStatus("Blackjack! You lose.");
         await delay(2500);
-        endGame();
+        setWon("lost");
     }
     else if (dealerTotal > 21) {
         setStatus("Bust! You win!");
         await delay(2500);
         updateWallet(wager * 2);
-        endGame();
+        setEarnings(wager);
+        setWon("won");
     }
     else {
         if (total > dealerTotal) {
             setStatus("You win!");
             await delay(2500);
             updateWallet(wager * 2);
+            setEarnings(wager);
+            setWon("won");
         }
         else if (dealerTotal > total) {
             setStatus("You lose!");
             await delay(2500);
+            setWon("lost");
         }
         else {
             setStatus("It's a tie!");
             await delay(2500);
             updateWallet(wager);
+            setEarnings(0);
+            setWon("won");
         }
-        endGame();
     }
   }
 
   function endGame() {
     const input = document.getElementById("wager");
     input.disabled = false;
-    input.value = 1;
+    //input.value = 1;
     setReady(false);
     for (let i = 1; i <= 11; i++) {
         const card = document.getElementById(i.toString());
@@ -296,7 +315,8 @@ export function BlackjackGame(props) {
     setNumDealerCards(0);
     setTotal(0);
     setDealerTotal(0);
-    GameNotifier.broadcastEvent(userName, GameEvent.Start, {});
+    const date = new Date().toLocaleDateString();
+    GameNotifier.broadcastEvent(userName, GameEvent.End, {name: userName, earnings: earnings, date: date, won: won});
   }
 
   function beg() {
@@ -317,11 +337,7 @@ export function BlackjackGame(props) {
                     {wallet == 0 && status == "Place wager" && <button className="beg" onClick={beg}>Beg for money</button>}
                 </section>
                 <section className="sub">
-                    <ul className="notification">
-                        <li className="player-name">{ready.toString()} just earned ${numCards}!</li>
-                        <li className="player-name">{test} just lost ${values.length}.</li>
-                        <li className="player-name">Nicolas is now in debt {values[0]}.</li>
-                    </ul>
+                    <Players userName={props.userName} />
                 </section>
                 <section className="sub">
                     <div>
@@ -329,7 +345,7 @@ export function BlackjackGame(props) {
                                 <label for="wager">Your Wager:</label>
                                 <div className="input-group mb-3">
                                     <span className="input-group-text">$</span>
-                                    <input id="wager" type="number" min="1" max={wallet} defaultValue="1" onChange={(e) => setWager(Number(e.target.value))} disabled={status != "Place wager"}/>
+                                    <input id="wager" type="number" min="1" max={wallet} defaultValue={wager} onChange={(e) => setWager(Number(e.target.value))} disabled={status != "Place wager"}/>
                                 </div>
                                 <button onClick={placeWager} disabled={status != "Place wager"}>Place</button>
                             </div>

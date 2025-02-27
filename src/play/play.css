@@ -169,7 +169,7 @@ menu {
     background-color: #4476AD;
     margin: 1em;
     border-radius: 5px;
-    border: thin black solid line;
+    border: solid black;
     width: 200px;
     align-items: center;
     align-self: center;

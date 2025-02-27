@@ -5,8 +5,8 @@ import { BlackjackGame } from './game';
 
 export function Play(props) {
   return (
-    <BlackjackGame userName={props.userName} />
-
-    
+    <main>
+        <BlackjackGame userName={props.userName} />
+    </main>
   );
 }
