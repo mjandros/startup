@@ -315,12 +315,49 @@ export function BlackjackGame(props) {
     setNumDealerCards(0);
     setTotal(0);
     setDealerTotal(0);
+    saveScore();
     const date = new Date().toLocaleDateString();
     GameNotifier.broadcastEvent(userName, GameEvent.End, {name: userName, earnings: earnings, date: date, won: won});
   }
 
   function beg() {
     updateWallet(100);
+  }
+
+  async function saveScore() {
+    const date = new Date().toLocaleDateString();
+    const newScore = { name: userName, score: wallet, date: date };
+    updateScoresLocal(newScore);
+  }
+
+  function updateScoresLocal(newScore) {
+    let scores = [];
+    const scoresText = localStorage.getItem('wallets');
+    if (scoresText) {
+      scores = JSON.parse(scoresText);
+    }
+
+    let found = false;
+    for (let i = 0; i < scores.length; i++) {
+        if (scores[i].name === newScore.name) {
+            scores[i].score = newScore.score; 
+            scores[i].date = newScore.date;
+            found = true;
+            break;
+        }
+    }
+
+    if (!found) {
+        scores.push(newScore);
+    }
+
+    scores.sort((a, b) => b.score - a.score);
+
+    if (scores.length > 10) {
+      scores.length = 10;
+    }
+
+    localStorage.setItem('wallets', JSON.stringify(scores));
   }
 
   return (
