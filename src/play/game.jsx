@@ -112,6 +112,12 @@ export function BlackjackGame(props) {
     }
   }, [test]);
 
+  React.useEffect(() => {
+    if (status == "Dealer's turn") {
+        dealerTurn();
+    }
+  }, [status, dealerTotal]);
+
   function placeWager() {
     if (wager > wallet || wager < 1) {
         return;
@@ -197,7 +203,7 @@ export function BlackjackGame(props) {
 
   function stand() {
     setReady(false);
-    updateStatus("Dealer's turn");
+    setStatus("Dealer's turn");
   }
   
   function doubleDown() {
@@ -231,9 +237,37 @@ export function BlackjackGame(props) {
     if (status != "Dealer's turn") {
         return;
     }
-    while (dealerTotal < 17) {
-        await delay(1000);
-        dealDealerCard();
+    if (dealerTotal < 17) {
+        await delay(1500);
+        setTest(dealerTotal);
+    }
+    else if (dealerTotal == 21) {
+        setStatus("Blackjack! You lose.");
+        await delay(2500);
+        endGame();
+    }
+    else if (dealerTotal > 21) {
+        setStatus("Bust! You win!");
+        await delay(2500);
+        updateWallet(wager * 2);
+        endGame();
+    }
+    else {
+        if (total > dealerTotal) {
+            setStatus("You win!");
+            await delay(2500);
+            updateWallet(wager * 2);
+        }
+        else if (dealerTotal > total) {
+            setStatus("You lose!");
+            await delay(2500);
+        }
+        else {
+            setStatus("It's a tie!");
+            await delay(2500);
+            updateWallet(wager);
+        }
+        endGame();
     }
   }
 
@@ -261,6 +295,10 @@ export function BlackjackGame(props) {
     GameNotifier.broadcastEvent(userName, GameEvent.Start, {});
   }
 
+  function beg() {
+    updateWallet(100);
+  }
+
   return (
     <main className="playMain">
             <section className="left">
@@ -272,6 +310,7 @@ export function BlackjackGame(props) {
                         <span className="input-group-text">$</span>
                         <input type="text" id="wallet" value={wallet} readonly />
                     </div>
+                    {wallet == 0 && status == "Place wager" && <button className="beg" onClick={beg}>Beg for money</button>}
                 </section>
                 <section className="sub">
                     <ul className="notification">
@@ -308,7 +347,7 @@ export function BlackjackGame(props) {
                 <p className="empty" id="d10">{dealerValues[9]}</p>
                 <p className="empty" id="d11">{dealerValues[10]}</p>
                 <label for="total">Dealer's Total:</label>
-                <input type="text" id="total" value={status == "Dealer's turn" ? dealerTotal : "--"} readonly /> 
+                <input type="text" id="total" value={status != "Your turn" ? dealerTotal : "--"} readonly /> 
                 <div>
                     {ready && <button onClick={hit}>Hit</button>}
                     {ready && <button onClick={stand}>Stand</button>}
