@@ -16,7 +16,10 @@ export function BlackjackGame(props) {
    const [status, setStatus] = React.useState("Place wager");
    const [ready, setReady] = React.useState(false);
    const [wager, setWager] = React.useState(1);
-   const [wallet, setWallet] = React.useState(1000);
+   //const [wallet, setWallet] = React.useState(1000);
+   const [wallet, setWallet] = React.useState(() => {
+    return parseFloat(localStorage.getItem("wallet")) || 1000;
+  });
    const [firstTurn, setFirstTurn] = React.useState(true);
    const [test, setTest] = React.useState("init");
 
@@ -47,6 +50,7 @@ export function BlackjackGame(props) {
   function updateWallet(value) {
     const updatedValue = wallet + value;
     setWallet(updatedValue);
+    localStorage.setItem("wallet", updatedValue);
   }
 
   function updateTotal() {
