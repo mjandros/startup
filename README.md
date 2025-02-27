@@ -102,8 +102,8 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **All functionality implemented or mocked out** - I did not complete this part of the deliverable.
-- [ ] **Hooks** - I did not complete this part of the deliverable.
+- [x] **All functionality implemented or mocked out** - Blackjack is now fully playable, although card probabilities do not necessarily reflect those of an actual deck (to be implemented using the Deck of Cards API). Usernames and wallet values are saved to local storage and will be visible on the Leaderboard page. Mocked notifications are sent periodically, along with real-time notifications based on the user's actions.
+- [x] **Hooks** - Included many const variables in game.jsx that utilize useState and setState. Also implemented several instances of useEffect to control function calls based on state changes.
 
 ## 🚀 Service deliverable
 

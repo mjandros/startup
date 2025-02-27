@@ -297,7 +297,6 @@ export function BlackjackGame(props) {
   function endGame() {
     const input = document.getElementById("wager");
     input.disabled = false;
-    //input.value = 1;
     setReady(false);
     for (let i = 1; i <= 11; i++) {
         const card = document.getElementById(i.toString());

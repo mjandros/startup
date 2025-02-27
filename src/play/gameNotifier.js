@@ -20,7 +20,6 @@ const GameEvent = {
     wager = Math.floor(Math.random() * 3000) + 1;
   
     constructor() {
-      // Simulate chat messages that will eventually come over WebSocket
       setInterval(() => {
         const date = new Date().toLocaleDateString();
         const userName = 'Don';
