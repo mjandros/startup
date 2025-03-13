@@ -32,6 +32,7 @@ export function BlackjackGame(props) {
         return response.json();
       })
       .then((data) => {
+        console.error("we in here rn");
         setWallet(data?.wallet ?? 0);
       })
       .catch((error) => {
@@ -67,7 +68,7 @@ export function BlackjackGame(props) {
   async function updateWallet(value) {
     setWallet(prevWallet => {
         const updatedValue = prevWallet + value;
-
+        console.log("updated wallet: " + updatedValue);
         fetch('/api/wallet', {
             method: 'POST',
             headers: { 'content-type': 'application/json' },

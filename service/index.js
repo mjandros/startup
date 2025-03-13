@@ -1,18 +1,24 @@
-const port = process.argv.length > 2 ? process.argv[2] : 4000;
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
-const uuid = require('uuid');
-const authCookieName = 'auth';
-
 const express = require('express');
+const uuid = require('uuid');
 const app = express();
 
-app.use(express.static('public'));
-app.use(express.json());
-app.use(cookieParser());
+const authCookieName = 'token';
 
 let users = [];
 let wallets = [];
+
+const port = process.argv.length > 2 ? process.argv[2] : 4000;
+
+app.use(express.json());
+app.use(cookieParser());
+app.use(express.static('public'));
+// app.use((req, res, next) => {
+//     console.log(`Incoming request: ${req.method} ${req.path}`);
+//     next();
+//   });
+
 
 let apiRouter = express.Router();
 app.use(`/api`, apiRouter);
@@ -55,14 +61,20 @@ apiRouter.post('/auth/create', async (req, res) => {
   
   // Middleware to verify that the user is authorized to call an endpoint
   const verifyAuth = async (req, res, next) => {
-    const user = await findUser('token', req.cookies[authCookieName]);
+    const user = await findUser('token', req.cookies?.[authCookieName]);
+    
+    console.log("User Found (verifyAuth):", user); // Check if the user is found
+
     if (user) {
-      next();
+        next();
     } else {
-      res.status(401).send({ msg: 'Unauthorized' });
+        console.log("Unauthorized request!"); // See if this is triggering
+        res.status(401).send({ msg: 'Unauthorized' });
     }
   };
   
+  apiRouter.use(verifyAuth);
+
 //   // GetWallets
 //   apiRouter.get('/wallets', verifyAuth, (_req, res) => {
 //     res.send(wallets);
@@ -84,13 +96,19 @@ apiRouter.get('/wallets', verifyAuth, (_req, res) => {
 });
 
 // Get the authenticated user's wallet
-apiRouter.get('/wallet', verifyAuth, (req, res) => {
-    const user = findUser('token', req.cookies[authCookieName]);
-    if (!user) {
-        return res.status(401).send({ msg: 'Unauthorized' });
+apiRouter.get('/wallet', verifyAuth, async (req, res) => {
+    try {
+      const user = await findUser('token', req.cookies[authCookieName]);
+      if (user) {
+        res.json({ wallet: user.wallet });
+      } else {
+        res.status(404).json({ error: 'User not found' });
+      }
+    } catch (error) {
+      console.error('Error fetching wallet:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
-    res.send({ wallet: user.wallet || 0 });
-});
+  });
 
 // Update the authenticated user's wallet
 apiRouter.post('/wallet', verifyAuth, (req, res) => {
@@ -99,9 +117,9 @@ apiRouter.post('/wallet', verifyAuth, (req, res) => {
         return res.status(401).send({ msg: 'Unauthorized' });
     }
 
-    if (typeof req.body.wallet !== 'number') {
-        return res.status(400).send({ msg: 'Invalid wallet value' });
-    }
+    // if (typeof req.body.wallet !== 'number') {
+    //     return res.status(400).send({ msg: 'Invalid wallet value' });
+    // }
 
     user.wallet = req.body.wallet;  // Store wallet value in the user object
     res.send({ wallet: user.wallet });
