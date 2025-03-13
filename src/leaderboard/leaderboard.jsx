@@ -5,13 +5,6 @@ export function Leaderboard() {
     const [scores, setScores] = React.useState([]);
 
   React.useEffect(() => {
-    const scoresText = localStorage.getItem('wallets');
-    if (scoresText) {
-      setScores(JSON.parse(scoresText));
-    }
-  }, []);
-
-  React.useEffect(() => {
     fetch('/api/wallet')
       .then((response) => response.json())
       .then((scores) => {

@@ -63,16 +63,49 @@ apiRouter.post('/auth/create', async (req, res) => {
     }
   };
   
-  // GetWallets
-  apiRouter.get('/wallets', verifyAuth, (_req, res) => {
-    res.send(wallets);
-  });
+//   // GetWallets
+//   apiRouter.get('/wallets', verifyAuth, (_req, res) => {
+//     res.send(wallets);
+//   });
   
-  // SubmitWallet
-  apiRouter.post('/wallet', verifyAuth, (req, res) => {
-    wallets = updateWallets(req.body);
-    res.send(wallets);
-  });
+//   // SubmitWallet
+//   apiRouter.post('/wallet', verifyAuth, (req, res) => {
+//     wallets = updateWallets(req.body);
+//     res.send(wallets);
+//   });
+
+// Get all wallets (e.g., for leaderboard)
+apiRouter.get('/wallets', verifyAuth, (_req, res) => {
+    const walletList = users.map(user => ({
+        email: user.email,
+        wallet: user.wallet || 0
+    }));
+    res.send(walletList);
+});
+
+// Get the authenticated user's wallet
+apiRouter.get('/wallet', verifyAuth, (req, res) => {
+    const user = findUser('token', req.cookies[authCookieName]);
+    if (!user) {
+        return res.status(401).send({ msg: 'Unauthorized' });
+    }
+    res.send({ wallet: user.wallet || 0 });
+});
+
+// Update the authenticated user's wallet
+apiRouter.post('/wallet', verifyAuth, (req, res) => {
+    const user = findUser('token', req.cookies[authCookieName]);
+    if (!user) {
+        return res.status(401).send({ msg: 'Unauthorized' });
+    }
+
+    if (typeof req.body.wallet !== 'number') {
+        return res.status(400).send({ msg: 'Invalid wallet value' });
+    }
+
+    user.wallet = req.body.wallet;  // Store wallet value in the user object
+    res.send({ wallet: user.wallet });
+})
   
   // Default error handler
   app.use(function (err, req, res, next) {
@@ -112,6 +145,7 @@ function updateWallets(newWallet) {
       email: email,
       password: passwordHash,
       token: uuid.v4(),
+      wallet: 1000,
     };
     users.push(user);
   

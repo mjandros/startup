@@ -17,14 +17,28 @@ export function BlackjackGame(props) {
    const [status, setStatus] = React.useState("Place wager");
    const [ready, setReady] = React.useState(false);
    const [wager, setWager] = React.useState(1);
-   const [wallet, setWallet] = React.useState(() => {
-    //return parseFloat(localStorage.getItem("wallet")) || 1000;
-    return fetch('/api/wallet');
-  });
+   const [wallet, setWallet] = React.useState(1000);
    const [firstTurn, setFirstTurn] = React.useState(true);
    const [test, setTest] = React.useState("init");
    const [earnings, setEarnings] = React.useState(0);
    const [won, setWon] = React.useState("");
+
+   React.useEffect(() => {
+    fetch('/api/wallet')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setWallet(data?.wallet ?? 0);
+      })
+      .catch((error) => {
+        console.error("Error fetching wallet:", error);
+        setWallet(0); // Fallback value to prevent crashes
+      });
+}, []);
 
   function updateValues(index, newVal) {
     setValues((prevValues) => {
@@ -51,16 +65,18 @@ export function BlackjackGame(props) {
   }
 
   async function updateWallet(value) {
-    const updatedValue = wallet + value;
-    setWallet(updatedValue);
-    //localStorage.setItem("wallet", updatedValue);
+    setWallet(prevWallet => {
+        const updatedValue = prevWallet + value;
 
-    await fetch('/api/wallet', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(updatedValue),
+        fetch('/api/wallet', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ wallet: updatedValue }),
+        });
+
+        return updatedValue;
     });
-  }
+}
 
   function updateTotal() {
     let newTotal = 0;
@@ -340,38 +356,7 @@ export function BlackjackGame(props) {
       body: JSON.stringify(newScore),
     });
 
-    //updateScoresLocal(newScore);
   }
-
-  // function updateScoresLocal(newScore) {
-  //   let scores = [];
-  //   const scoresText = localStorage.getItem('wallets');
-  //   if (scoresText) {
-  //     scores = JSON.parse(scoresText);
-  //   }
-
-  //   let found = false;
-  //   for (let i = 0; i < scores.length; i++) {
-  //       if (scores[i].name === newScore.name) {
-  //           scores[i].score = newScore.score; 
-  //           scores[i].date = newScore.date;
-  //           found = true;
-  //           break;
-  //       }
-  //   }
-
-  //   if (!found) {
-  //       scores.push(newScore);
-  //   }
-
-  //   scores.sort((a, b) => b.score - a.score);
-
-  //   if (scores.length > 10) {
-  //     scores.length = 10;
-  //   }
-
-  //   localStorage.setItem('wallets', JSON.stringify(scores));
-  // }
 
   return (
     <main className="playMain">
