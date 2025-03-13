@@ -18,7 +18,8 @@ export function BlackjackGame(props) {
    const [ready, setReady] = React.useState(false);
    const [wager, setWager] = React.useState(1);
    const [wallet, setWallet] = React.useState(() => {
-    return parseFloat(localStorage.getItem("wallet")) || 1000;
+    //return parseFloat(localStorage.getItem("wallet")) || 1000;
+    return fetch('/api/wallet');
   });
    const [firstTurn, setFirstTurn] = React.useState(true);
    const [test, setTest] = React.useState("init");
@@ -49,10 +50,16 @@ export function BlackjackGame(props) {
     setNumDealerCards(numDealerCards + 1);
   }
 
-  function updateWallet(value) {
+  async function updateWallet(value) {
     const updatedValue = wallet + value;
     setWallet(updatedValue);
-    localStorage.setItem("wallet", updatedValue);
+    //localStorage.setItem("wallet", updatedValue);
+
+    await fetch('/api/wallet', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(updatedValue),
+    });
   }
 
   function updateTotal() {
@@ -326,38 +333,45 @@ export function BlackjackGame(props) {
   async function saveScore() {
     const date = new Date().toLocaleDateString();
     const newScore = { name: userName, score: wallet, date: date };
-    updateScoresLocal(newScore);
+
+    await fetch('/api/wallet', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(newScore),
+    });
+
+    //updateScoresLocal(newScore);
   }
 
-  function updateScoresLocal(newScore) {
-    let scores = [];
-    const scoresText = localStorage.getItem('wallets');
-    if (scoresText) {
-      scores = JSON.parse(scoresText);
-    }
+  // function updateScoresLocal(newScore) {
+  //   let scores = [];
+  //   const scoresText = localStorage.getItem('wallets');
+  //   if (scoresText) {
+  //     scores = JSON.parse(scoresText);
+  //   }
 
-    let found = false;
-    for (let i = 0; i < scores.length; i++) {
-        if (scores[i].name === newScore.name) {
-            scores[i].score = newScore.score; 
-            scores[i].date = newScore.date;
-            found = true;
-            break;
-        }
-    }
+  //   let found = false;
+  //   for (let i = 0; i < scores.length; i++) {
+  //       if (scores[i].name === newScore.name) {
+  //           scores[i].score = newScore.score; 
+  //           scores[i].date = newScore.date;
+  //           found = true;
+  //           break;
+  //       }
+  //   }
 
-    if (!found) {
-        scores.push(newScore);
-    }
+  //   if (!found) {
+  //       scores.push(newScore);
+  //   }
 
-    scores.sort((a, b) => b.score - a.score);
+  //   scores.sort((a, b) => b.score - a.score);
 
-    if (scores.length > 10) {
-      scores.length = 10;
-    }
+  //   if (scores.length > 10) {
+  //     scores.length = 10;
+  //   }
 
-    localStorage.setItem('wallets', JSON.stringify(scores));
-  }
+  //   localStorage.setItem('wallets', JSON.stringify(scores));
+  // }
 
   return (
     <main className="playMain">

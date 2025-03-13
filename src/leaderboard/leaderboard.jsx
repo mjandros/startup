@@ -11,6 +11,14 @@ export function Leaderboard() {
     }
   }, []);
 
+  React.useEffect(() => {
+    fetch('/api/wallet')
+      .then((response) => response.json())
+      .then((scores) => {
+        setScores(scores);
+      });
+  }, []);
+
   const scoreRows = [];
   if (scores.length) {
     for (const [i, score] of scores.entries()) {
