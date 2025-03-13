@@ -14,10 +14,13 @@ const port = process.argv.length > 2 ? process.argv[2] : 4000;
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.static('public'));
-// app.use((req, res, next) => {
-//     console.log(`Incoming request: ${req.method} ${req.path}`);
-//     next();
-//   });
+app.use((req, res, next) => {
+    console.log(`Incoming request: ${req.method} ${req.path}`);
+    if (req.method === "POST") {
+        console.log(`Amount: ${req.body.wallet}`);
+    }
+    next();
+  });
 
 
 let apiRouter = express.Router();
@@ -75,23 +78,13 @@ apiRouter.post('/auth/create', async (req, res) => {
   
   apiRouter.use(verifyAuth);
 
-//   // GetWallets
-//   apiRouter.get('/wallets', verifyAuth, (_req, res) => {
-//     res.send(wallets);
-//   });
-  
-//   // SubmitWallet
-//   apiRouter.post('/wallet', verifyAuth, (req, res) => {
-//     wallets = updateWallets(req.body);
-//     res.send(wallets);
-//   });
-
 // Get all wallets (e.g., for leaderboard)
 apiRouter.get('/wallets', verifyAuth, (_req, res) => {
     const walletList = users.map(user => ({
         email: user.email,
         wallet: user.wallet || 0
     }));
+    console.log(`wallets: ${walletList[0]}`);
     res.send(walletList);
 });
 
@@ -117,11 +110,8 @@ apiRouter.post('/wallet', verifyAuth, (req, res) => {
         return res.status(401).send({ msg: 'Unauthorized' });
     }
 
-    // if (typeof req.body.wallet !== 'number') {
-    //     return res.status(400).send({ msg: 'Invalid wallet value' });
-    // }
-
     user.wallet = req.body.wallet;  // Store wallet value in the user object
+    console.log(`updated wallet: ${user.wallet}`);
     res.send({ wallet: user.wallet });
 })
   

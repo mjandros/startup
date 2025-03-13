@@ -17,29 +17,33 @@ export function BlackjackGame(props) {
    const [status, setStatus] = React.useState("Place wager");
    const [ready, setReady] = React.useState(false);
    const [wager, setWager] = React.useState(1);
-   const [wallet, setWallet] = React.useState(1000);
+   const [wallet, setWallet] = React.useState(0);
    const [firstTurn, setFirstTurn] = React.useState(true);
    const [test, setTest] = React.useState("init");
    const [earnings, setEarnings] = React.useState(0);
    const [won, setWon] = React.useState("");
 
    React.useEffect(() => {
-    fetch('/api/wallet')
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+    async function fetchWallet() {
+        try {
+            const response = await fetch('/api/wallet');
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            setWallet(data.wallet); // Set wallet value from API
+        } catch (error) {
+            setError(error.message); // Handle error (optional)
+            console.error("Error fetching wallet:", error);
         }
-        return response.json();
-      })
-      .then((data) => {
-        console.error("we in here rn");
-        setWallet(data?.wallet ?? 0);
-      })
-      .catch((error) => {
-        console.error("Error fetching wallet:", error);
-        setWallet(0); // Fallback value to prevent crashes
-      });
-}, []);
+    }
+
+    fetchWallet();
+}, []); // Empty dependency array to run this effect only once on mount
+
+// if (wallet === null) {
+//     return <div>Loading...</div>; // Display loading message until wallet is fetched
+// }
 
   function updateValues(index, newVal) {
     setValues((prevValues) => {
@@ -338,7 +342,7 @@ export function BlackjackGame(props) {
     setNumDealerCards(0);
     setTotal(0);
     setDealerTotal(0);
-    saveScore();
+   // saveScore();
     const date = new Date().toLocaleDateString();
     GameNotifier.broadcastEvent(userName, GameEvent.End, {name: userName, earnings: earnings, date: date, won: won});
   }
@@ -347,17 +351,17 @@ export function BlackjackGame(props) {
     updateWallet(100);
   }
 
-  async function saveScore() {
-    const date = new Date().toLocaleDateString();
-    const newScore = { name: userName, score: wallet, date: date };
+  // async function saveScore() {
+  //   const date = new Date().toLocaleDateString();
+  //   const newScore = { name: userName, score: wallet, date: date };
 
-    await fetch('/api/wallet', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(newScore),
-    });
+  //   await fetch('/api/wallet', {
+  //     method: 'POST',
+  //     headers: { 'content-type': 'application/json' },
+  //     body: JSON.stringify(newScore),
+  //   });
 
-  }
+  // }
 
   return (
     <main className="playMain">
@@ -365,10 +369,10 @@ export function BlackjackGame(props) {
                 <section className="sub">
                     <p>Welcome, {userName}.</p>
                     <br />
-                    <label for="wallet">Your Wallet:</label>
+                    <label htmlFor="wallet">Your Wallet:</label>
                     <div className="input-group mb-3">
                         <span className="input-group-text">$</span>
-                        <input type="text" id="wallet" value={wallet} readonly />
+                        <input type="text" id="wallet" value={wallet} readOnly />
                     </div>
                     {wallet == 0 && status == "Place wager" && <button className="beg" onClick={beg}>Beg for money</button>}
                 </section>
@@ -378,7 +382,7 @@ export function BlackjackGame(props) {
                 <section className="sub">
                     <div>
                             <div>
-                                <label for="wager">Your Wager:</label>
+                                <label htmlFor="wager">Your Wager:</label>
                                 <div className="input-group mb-3">
                                     <span className="input-group-text">$</span>
                                     <input id="wager" type="number" min="1" max={wallet} defaultValue={wager} onChange={(e) => setWager(Number(e.target.value))} disabled={status != "Place wager"}/>
@@ -402,8 +406,8 @@ export function BlackjackGame(props) {
                 <p className="empty" id="d9">{dealerValues[8]}</p>
                 <p className="empty" id="d10">{dealerValues[9]}</p>
                 <p className="empty" id="d11">{dealerValues[10]}</p>
-                <label for="total">Dealer's Total:</label>
-                <input type="text" id="total" value={status != "Your turn" ? dealerTotal : "--"} readonly /> 
+                <label htmlFor="total">Dealer's Total:</label>
+                <input type="text" id="total" value={status != "Your turn" ? dealerTotal : "--"} readOnly /> 
                 <div>
                     {ready && <button onClick={hit}>Hit</button>}
                     {ready && <button onClick={stand}>Stand</button>}
@@ -413,8 +417,8 @@ export function BlackjackGame(props) {
                 <div className="statusDiv">
                     <p className="status">{status}</p>
                 </div>
-                <label for="total">Current Total:</label>
-                <input type="text" id="total" value={total} readonly />                    
+                <label htmlFor="total">Current Total:</label>
+                <input type="text" id="total" value={total} readOnly />                    
                 <br />
                 <div className="space" id="1">{values[0]}</div>
                 <div className="space" id="2">{values[1]}</div>
