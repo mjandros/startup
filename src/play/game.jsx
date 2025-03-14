@@ -23,8 +23,9 @@ export function BlackjackGame(props) {
    const [earnings, setEarnings] = React.useState(0);
    const [won, setWon] = React.useState("");
    const [deck, setDeck] = React.useState("");
-   const [card, setCard] = React.useState({});
-   const [id, setID] = React.useState("");
+   const [playerCards, setPlayerCards] = React.useState([]);
+   const [dealerCards, setDealerCards] = React.useState([]);
+   const [dealerFirst, setDealerFirst] = React.useState("");
 
    React.useEffect(() => {
     async function fetchWallet() {
@@ -62,6 +63,27 @@ export function BlackjackGame(props) {
         updatedValues[index] = newVal;
         return updatedValues;
     });
+  }
+
+  function updateDealerCards(index, img) {
+    setDealerCards((prevValues) => {
+      let newVal = <img src={img} alt="Card" className="card-image"/>;
+      if (index == 0) {
+        newVal = <img src='https://www.deckofcardsapi.com/static/img/back.png' alt="Back of card" className="card-image"/>;
+      }
+      const updatedValues = [...prevValues];
+      updatedValues[index] = newVal;
+      return updatedValues;
+  });
+  }
+
+  function updatePlayerCards(index, img) {
+    setPlayerCards((prevValues) => {
+      let newVal = <img src={img} alt="Card" className="card-image"/>;
+      const updatedValues = [...prevValues];
+      updatedValues[index] = newVal;
+      return updatedValues;
+  });
   }
 
   function updateNumCards() {
@@ -249,6 +271,7 @@ async function drawCard() {
     //     val = getRandomValue();
     // }
     updateValues(currentNumCards - 1, val);
+    updatePlayerCards(currentNumCards - 1, card.image);
   }
 
  async function dealDealerCard() {
@@ -272,6 +295,10 @@ async function drawCard() {
       val = card.value;
     }
     updateDealerValues(currentNumDealerCards - 1, val);
+    updateDealerCards(currentNumDealerCards - 1, card.image);
+    if (currentNumDealerCards == 1) {
+      setDealerFirst(card.image);
+    }
   }
 
   function getRandomValue() {
@@ -307,6 +334,7 @@ async function drawCard() {
   function stand() {
     setReady(false);
     setStatus("Dealer's turn");
+    dealerCards[0] = <img src={dealerFirst} alt="Card" className="card-image"/>
   }
   
   function doubleDown() {
@@ -399,6 +427,8 @@ async function drawCard() {
     setDealerValues([0]);
     setNumCards(0);
     setNumDealerCards(0);
+    setDealerCards([]);
+    setPlayerCards([]);
     setTotal(0);
     setDealerTotal(0);
     const date = new Date().toLocaleDateString();
@@ -441,17 +471,17 @@ async function drawCard() {
             <br />
             <section className="right">
                 <p className="deck"></p>
-                <p className="empty" id="d1">{!ready && <span>{dealerValues[0]}</span>}</p>
-                <p className="empty" id="d2">{dealerValues[1]}</p>
-                <p className="empty" id="d3">{dealerValues[2]}</p>
-                <p className="empty" id="d4">{dealerValues[3]}</p>
-                <p className="empty" id="d5">{dealerValues[4]}</p>
-                <p className="empty" id="d6">{dealerValues[5]}</p>
-                <p className="empty" id="d7">{dealerValues[6]}</p>
-                <p className="empty" id="d8">{dealerValues[7]}</p>
-                <p className="empty" id="d9">{dealerValues[8]}</p>
-                <p className="empty" id="d10">{dealerValues[9]}</p>
-                <p className="empty" id="d11">{dealerValues[10]}</p>
+                <p className="empty" id="d1">{dealerCards[0]}</p>
+                <p className="empty" id="d2">{dealerCards[1]}</p>
+                <p className="empty" id="d3">{dealerCards[2]}</p>
+                <p className="empty" id="d4">{dealerCards[3]}</p>
+                <p className="empty" id="d5">{dealerCards[4]}</p>
+                <p className="empty" id="d6">{dealerCards[5]}</p>
+                <p className="empty" id="d7">{dealerCards[6]}</p>
+                <p className="empty" id="d8">{dealerCards[7]}</p>
+                <p className="empty" id="d9">{dealerCards[8]}</p>
+                <p className="empty" id="d10">{dealerCards[9]}</p>
+                <p className="empty" id="d11">{dealerCards[10]}</p>
                 <label htmlFor="total">Dealer's Total:</label>
                 <input type="text" id="total" value={status != "Your turn" ? dealerTotal : "--"} readOnly /> 
                 <div>
@@ -466,17 +496,17 @@ async function drawCard() {
                 <label htmlFor="total">Current Total:</label>
                 <input type="text" id="total" value={total} readOnly />                    
                 <br />
-                <div className="space" id="1">{values[0]}</div>
-                <div className="space" id="2">{values[1]}</div>
-                <div className="space" id="3">{values[2]}</div>
-                <div className="space" id="4">{values[3]}</div>
-                <div className="empty" id="5">{values[4]}</div>
-                <div className="empty" id="6">{values[5]}</div>
-                <div className="empty" id="7">{values[6]}</div>
-                <div className="empty" id="8">{values[7]}</div>
-                <div className="empty" id="9">{values[8]}</div>
-                <div className="empty" id="10">{values[9]}</div>
-                <div className="empty" id="11">{values[10]}</div>
+                <div className="space" id="1">{playerCards[0]}</div>
+                <div className="space" id="2">{playerCards[1]}</div>
+                <div className="space" id="3">{playerCards[2]}</div>
+                <div className="space" id="4">{playerCards[3]}</div>
+                <div className="empty" id="5">{playerCards[4]}</div>
+                <div className="empty" id="6">{playerCards[5]}</div>
+                <div className="empty" id="7">{playerCards[6]}</div>
+                <div className="empty" id="8">{playerCards[7]}</div>
+                <div className="empty" id="9">{playerCards[8]}</div>
+                <div className="empty" id="10">{playerCards[9]}</div>
+                <div className="empty" id="11">{playerCards[10]}</div>
             </section>   
         </main>
 
