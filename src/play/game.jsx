@@ -22,6 +22,9 @@ export function BlackjackGame(props) {
    const [test, setTest] = React.useState("init");
    const [earnings, setEarnings] = React.useState(0);
    const [won, setWon] = React.useState("");
+   const [deck, setDeck] = React.useState("");
+   const [card, setCard] = React.useState({});
+   const [id, setID] = React.useState("");
 
    React.useEffect(() => {
     async function fetchWallet() {
@@ -72,7 +75,6 @@ export function BlackjackGame(props) {
   async function updateWallet(value) {
     setWallet(prevWallet => {
         const updatedValue = prevWallet + value;
-        console.log("updated wallet: " + updatedValue);
         fetch('/api/wallet', {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
@@ -140,11 +142,22 @@ export function BlackjackGame(props) {
     dealCard();
   }, [test]);
 
+  // React.useEffect(() => {
+  //   console.log(`id: ${id}`);
+  //   setDeck(id);
+  // }, [id]);
+
   React.useEffect(() => {
     if (test != "init") {
         dealDealerCard();
     }
   }, [test]);
+
+  React.useEffect(() => {
+    if (deck != "" && !(deck instanceof Promise)) {
+      setUpGame();
+    }
+  }, [deck]);
 
   React.useEffect(() => {
     if (status == "Dealer's turn") {
@@ -176,31 +189,69 @@ export function BlackjackGame(props) {
     const date = new Date().toLocaleDateString();
     GameNotifier.broadcastEvent(userName, GameEvent.Start, {name: userName, earnings: wager, date: date, won: won});
     setFirstTurn(true);
+    shuffleDeck();
+    //setID(shuffleDeck());
+    //setDeck(id);
+  }
+
+async function setUpGame() {
     dealCard();
     dealDealerCard();
     await delay(200);
     setTest("go");
-  }
+}
 
- function dealCard() {
+async function shuffleDeck() {
+  const response = await fetch(`https://www.deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1`);
+  const data = await response.json();
+  setDeck(data.deck_id);
+}
+
+async function drawCard() {
+  if (deck == "") {
+    return;
+  }
+  const response = await fetch(`https://www.deckofcardsapi.com/api/deck/${deck}/draw/?count=1`);
+  const data = await response.json();
+  return data.cards[0];
+}
+
+ async function dealCard() {
+    if (deck == "") {
+      return;
+    }
     let currentNumCards = numCards + 1;
     if (!ready) {
         return;
     }
     updateNumCards();
+    //setCard(drawCard());
+    //await delay(500);
     const space = document.getElementById((currentNumCards).toString());
     if (space.classList.contains("empty")) {
         space.classList.replace("empty", "space");
     }
     space.classList.replace("space", "card")
-    let val = getRandomValue();
-    while (!isValid(val)) {
-        val = getRandomValue();
+    let card = await drawCard();
+    let val = card.value;
+    if (val == "JACK" || val == "QUEEN" || val == "KING" || val == "0") {
+      val = 10;
+    } else if (val === "ACE") {
+      val = 1;
+    } else if (Number(val) < 11 && Number(val) > 1) {
+      val = Number(val);
+    } else {
+      setCard(drawCard());
+      val = card.value;
     }
+
+    // while (!isValid(val)) {
+    //     val = getRandomValue();
+    // }
     updateValues(currentNumCards - 1, val);
   }
 
- function dealDealerCard() {
+ async function dealDealerCard() {
     let currentNumDealerCards = numDealerCards + 1;
     updateNumDealerCards();
     const space = document.getElementById("d" + (currentNumDealerCards).toString());
@@ -208,9 +259,17 @@ export function BlackjackGame(props) {
         space.classList.replace("empty", "space");
     }
     space.classList.replace("space", "card")
-    let val = getRandomValue();
-    while (!isValid(val)) {
-        val = getRandomValue();
+    let card = await drawCard();
+    let val = card.value;
+    if (val == "JACK" || val == "QUEEN" || val == "KING" || val == "0") {
+      val = 10;
+    } else if (val === "ACE") {
+      val = 1;
+    } else if (Number(val) < 11 && Number(val) > 1) {
+      val = Number(val);
+    } else {
+      setCard(drawCard());
+      val = card.value;
     }
     updateDealerValues(currentNumDealerCards - 1, val);
   }
@@ -342,7 +401,6 @@ export function BlackjackGame(props) {
     setNumDealerCards(0);
     setTotal(0);
     setDealerTotal(0);
-   // saveScore();
     const date = new Date().toLocaleDateString();
     GameNotifier.broadcastEvent(userName, GameEvent.End, {name: userName, earnings: earnings, date: date, won: won});
   }
@@ -350,18 +408,6 @@ export function BlackjackGame(props) {
   function beg() {
     updateWallet(100);
   }
-
-  // async function saveScore() {
-  //   const date = new Date().toLocaleDateString();
-  //   const newScore = { name: userName, score: wallet, date: date };
-
-  //   await fetch('/api/wallet', {
-  //     method: 'POST',
-  //     headers: { 'content-type': 'application/json' },
-  //     body: JSON.stringify(newScore),
-  //   });
-
-  // }
 
   return (
     <main className="playMain">
