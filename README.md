@@ -109,11 +109,11 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Node.js/Express HTTP service** - I did not complete this part of the deliverable.
-- [ ] **Static middleware for frontend** - I did not complete this part of the deliverable.
-- [ ] **Calls to third party endpoints** - I did not complete this part of the deliverable.
-- [ ] **Backend service endpoints** - I did not complete this part of the deliverable.
-- [ ] **Frontend calls service endpoints** - I did not complete this part of the deliverable.
+- [x] **Node.js/Express HTTP service** - I set up the required services using Node.js and Express.
+- [x] **Static middleware for frontend** - I completed this part of the deliverable.
+- [x] **Calls to third party endpoints** - I implemented the Deck of Cards API to track cards that have been used and to add images for cards in use. (https://www.deckofcardsapi.com/?ref=freepublicapis.com)
+- [x] **Backend service endpoints** - I implemented backend endpoints for registration, login, logout, and wallet tracking.
+- [x] **Frontend calls service endpoints** - I called the registration, login, and logout endpoints in various files within login/, and used wallet calls in play/game.jsx and leaderboard/leaderboard.jsx.
 
 ## 🚀 DB/Login deliverable
 
