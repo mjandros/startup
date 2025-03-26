@@ -82,14 +82,9 @@ apiRouter.post('/auth/create', async (req, res) => {
   apiRouter.use(verifyAuth);
 
 // Get all wallets (e.g., for leaderboard)
-apiRouter.get('/wallets', verifyAuth, (_req, res) => {
-    // const walletList = users.map(user => ({
-    //     email: user.email,
-    //     wallet: user.wallet || 0
-    // }));
-    // console.log(`wallets: ${walletList[0]}`);
-    // res.send(walletList);
-    res.send(getHighScores());
+apiRouter.get('/wallets', verifyAuth, async (_req, res) => {
+  const highScores = await getHighScores();
+  res.send(highScores);
 });
 
 // Get the authenticated user's wallet
@@ -108,16 +103,15 @@ apiRouter.get('/wallet', verifyAuth, async (req, res) => {
   });
 
 // Update the authenticated user's wallet
-apiRouter.post('/wallet', verifyAuth, (req, res) => {
-    const user = findUser('token', req.cookies[authCookieName]);
-    if (!user) {
-        return res.status(401).send({ msg: 'Unauthorized' });
-    }
-
-    //user.wallet = req.body.wallet;  // Store wallet value in the user object
-    updateWallet({ email: user.email, score: req.body.wallet });
-    //console.log(`updated wallet: ${user.wallet}`);
+apiRouter.post('/wallet', verifyAuth, async (req, res) => {
+  try {
+    const user = await findUser('token', req.cookies[authCookieName]);
+    await updateWallet({ email: user.email, score: req.body.wallet });
     res.send({ wallet: getUser(user.email).wallet });
+  } catch (error) {
+    return res.status(401).send({ msg: 'Unauthorized' });
+  }
+    
 })
   
   // Default error handler
@@ -130,26 +124,26 @@ apiRouter.post('/wallet', verifyAuth, (req, res) => {
     res.sendFile('index.html', { root: 'public' });
   });
 
-function updateWallets(newWallet) {
-    let found = false;
-    for (const [i, prevWallet] of wallets.entries()) {
-      if (newWallet.wallet > prevWallet.wallet) {
-        wallets.splice(i, 0, newWallet);
-        found = true;
-        break;
-      }
-    }
+// function updateWallets(newWallet) {
+//     let found = false;
+//     for (const [i, prevWallet] of wallets.entries()) {
+//       if (newWallet.wallet > prevWallet.wallet) {
+//         wallets.splice(i, 0, newWallet);
+//         found = true;
+//         break;
+//       }
+//     }
   
-    if (!found) {
-      wallets.push(newWallet);
-    }
+//     if (!found) {
+//       wallets.push(newWallet);
+//     }
   
-    if (wallets.length > 10) {
-      wallets.length = 10;
-    }
+//     if (wallets.length > 10) {
+//       wallets.length = 10;
+//     }
   
-    return wallets;
-  }
+//     return wallets;
+//   }
   
   async function createUser(email, password) {
     const passwordHash = await bcrypt.hash(password, 10);
@@ -161,7 +155,7 @@ function updateWallets(newWallet) {
       wallet: 1000,
     };
     addUser(user);
-    users.push(user);
+    //users.push(user);
   
     return user;
   }
@@ -169,9 +163,9 @@ function updateWallets(newWallet) {
   async function findUser(field, value) {
     if (!value) return null;
     if (field == 'token') {
-      return getUserByToken(value);
+      return await getUserByToken(value);
     }
-    return getUser(value);
+    return await getUser(value);
   }
   
   // setAuthCookie in the HTTP response
