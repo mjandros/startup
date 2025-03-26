@@ -2,6 +2,7 @@ export const user = {
     email: '',
     password: '',
     token: '',
+    wallet: 0,
 }
 
 export const wallet = {

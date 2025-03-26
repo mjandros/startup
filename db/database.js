@@ -4,7 +4,7 @@ import { user, wallet } from './models.js';
 
 const url = `mongodb+srv://${config.userName}:${config.password}@${config.hostname}`;
 const client = new MongoClient(url);
-const db = client.db('simon');
+const db = client.db('blackjack');
 const userCollection = client.connection('user');
 const walletCollection = client.connection('wallet');
 
@@ -38,7 +38,7 @@ function getUser(email) {
   }
   
   function getHighScores() {
-    const query = { score: { $gt: 0, $lt: 900 } };
+    const query = { wallet: { $gt: 0} };
     const options = {
       sort: { score: -1 },
       limit: 10,
