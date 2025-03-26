@@ -1,3 +1,6 @@
+import { getUser, getUserByToken, addUser, updateWallet, addWallet, getHighScores } from './database.js';
+import { user, wallet } from './models.js';
+
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
 const express = require('express');
@@ -80,12 +83,13 @@ apiRouter.post('/auth/create', async (req, res) => {
 
 // Get all wallets (e.g., for leaderboard)
 apiRouter.get('/wallets', verifyAuth, (_req, res) => {
-    const walletList = users.map(user => ({
-        email: user.email,
-        wallet: user.wallet || 0
-    }));
-    console.log(`wallets: ${walletList[0]}`);
-    res.send(walletList);
+    // const walletList = users.map(user => ({
+    //     email: user.email,
+    //     wallet: user.wallet || 0
+    // }));
+    // console.log(`wallets: ${walletList[0]}`);
+    // res.send(walletList);
+    res.send(getHighScores());
 });
 
 // Get the authenticated user's wallet
@@ -110,9 +114,10 @@ apiRouter.post('/wallet', verifyAuth, (req, res) => {
         return res.status(401).send({ msg: 'Unauthorized' });
     }
 
-    user.wallet = req.body.wallet;  // Store wallet value in the user object
-    console.log(`updated wallet: ${user.wallet}`);
-    res.send({ wallet: user.wallet });
+    //user.wallet = req.body.wallet;  // Store wallet value in the user object
+    updateWallet({ email: user.email, score: req.body.wallet });
+    //console.log(`updated wallet: ${user.wallet}`);
+    res.send({ wallet: getUser(user.email).wallet });
 })
   
   // Default error handler
@@ -155,6 +160,7 @@ function updateWallets(newWallet) {
       token: uuid.v4(),
       wallet: 1000,
     };
+    addUser(user);
     users.push(user);
   
     return user;
@@ -162,8 +168,10 @@ function updateWallets(newWallet) {
   
   async function findUser(field, value) {
     if (!value) return null;
-  
-    return users.find((u) => u[field] === value);
+    if (field == 'token') {
+      return getUserByToken(value);
+    }
+    return getUser(value);
   }
   
   // setAuthCookie in the HTTP response
