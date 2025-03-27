@@ -1,5 +1,4 @@
-import { getUser, getUserByToken, addUser, updateWallet, addWallet, getHighScores } from './database.js';
-import { user, wallet } from './models.js';
+import { getUser, getUserByToken, updateToken, addUser, updateWallet, addWallet, getHighScores } from './database.js';
 
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
@@ -8,9 +7,6 @@ const uuid = require('uuid');
 const app = express();
 
 const authCookieName = 'token';
-
-let users = [];
-let wallets = [];
 
 const port = process.argv.length > 2 ? process.argv[2] : 4000;
 
@@ -48,6 +44,7 @@ apiRouter.post('/auth/create', async (req, res) => {
       if (await bcrypt.compare(req.body.password, user.password)) {
         user.token = uuid.v4();
         setAuthCookie(res, user.token);
+        await updateToken({email: user.email, token: user.token});
         res.send({ email: user.email });
         return;
       }
@@ -59,7 +56,7 @@ apiRouter.post('/auth/create', async (req, res) => {
   apiRouter.delete('/auth/logout', async (req, res) => {
     const user = await findUser('token', req.cookies[authCookieName]);
     if (user) {
-      delete user.token;
+      await updateToken({ email: user.email, token: '' });
     }
     res.clearCookie(authCookieName);
     res.status(204).end();
@@ -107,7 +104,8 @@ apiRouter.post('/wallet', verifyAuth, async (req, res) => {
   try {
     const user = await findUser('token', req.cookies[authCookieName]);
     await updateWallet({ email: user.email, score: req.body.wallet });
-    res.send({ wallet: getUser(user.email).wallet });
+    user = await findUser('email', user.email);
+    res.send({ wallet: user.wallet });
   } catch (error) {
     return res.status(401).send({ msg: 'Unauthorized' });
   }
@@ -123,27 +121,6 @@ apiRouter.post('/wallet', verifyAuth, async (req, res) => {
   app.use((_req, res) => {
     res.sendFile('index.html', { root: 'public' });
   });
-
-// function updateWallets(newWallet) {
-//     let found = false;
-//     for (const [i, prevWallet] of wallets.entries()) {
-//       if (newWallet.wallet > prevWallet.wallet) {
-//         wallets.splice(i, 0, newWallet);
-//         found = true;
-//         break;
-//       }
-//     }
-  
-//     if (!found) {
-//       wallets.push(newWallet);
-//     }
-  
-//     if (wallets.length > 10) {
-//       wallets.length = 10;
-//     }
-  
-//     return wallets;
-//   }
   
   async function createUser(email, password) {
     const passwordHash = await bcrypt.hash(password, 10);
@@ -154,8 +131,7 @@ apiRouter.post('/wallet', verifyAuth, async (req, res) => {
       token: uuid.v4(),
       wallet: 1000,
     };
-    addUser(user);
-    //users.push(user);
+    await addUser(user);
   
     return user;
   }
