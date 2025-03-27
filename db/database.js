@@ -24,6 +24,10 @@ function getUser(email) {
   function getUserByToken(token) {
     return userCollection.findOne({ token: token });
   }
+
+  async function updateToken(user) {
+    await userCollection.updateOne({email: user.email}, {$set: user});
+  }
   
   async function addUser(user) {
     await userCollection.insertOne(user);
