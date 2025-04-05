@@ -45,9 +45,10 @@ function getUser(email) {
     const options = {
       sort: { wallet: -1 },
       limit: 10,
+      //projection: { email: 1, wallet: 1, date: 1},
     };
-    const cursor = walletCollection.find(query, options);
-    return cursor.toArray();
+    const cursor = userCollection.find(query, options);
+    return results = cursor.toArray();
   }
 
   module.exports = {

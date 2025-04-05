@@ -2,24 +2,25 @@ import React from 'react';
 import './leaderboard.css';
 
 export function Leaderboard() {
-    const [scores, setScores] = React.useState([]);
+    const [wallets, setWallets] = React.useState([]);
 
   React.useEffect(() => {
-    fetch('/api/wallet')
+    fetch('/api/wallets', {method: 'get'})
       .then((response) => response.json())
       .then((scores) => {
-        setScores(scores);
+        setWallets(scores);
       });
   }, []);
 
   const scoreRows = [];
-  if (scores.length) {
-    for (const [i, score] of scores.entries()) {
+  if (wallets.length) {
+    for (const [i, score] of wallets.entries()) {
+      console.log("Score: \n" + score);
       scoreRows.push(
         <tr key={i}>
           <td>{i + 1}</td>
-          <td>{score.name.split('@')[0]}</td>
-          <td>{score.score}</td>
+          <td>{score.email}</td>
+          <td>{score.wallet}</td>
           <td>{score.date}</td>
         </tr>
       );
@@ -42,7 +43,7 @@ export function Leaderboard() {
                         <th>Last Played</th>
                     </tr>
                 </thead>
-                <tbody id='scores'>{scoreRows}</tbody>
+                <tbody id='wallets'>{scoreRows}</tbody>
             </table>
         </main>
   );
