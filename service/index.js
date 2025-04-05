@@ -103,7 +103,7 @@ apiRouter.get('/wallet', verifyAuth, async (req, res) => {
 apiRouter.post('/wallet', verifyAuth, async (req, res) => {
   try {
     const user = await findUser('token', req.cookies[authCookieName]);
-    await updateWallet({ email: user.email, score: req.body.wallet });
+    await updateWallet({ email: user.email, wallet: req.body.wallet });
     user = await findUser('email', user.email);
     res.send({ wallet: user.wallet });
   } catch (error) {
