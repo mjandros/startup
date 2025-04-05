@@ -66,12 +66,10 @@ apiRouter.post('/auth/create', async (req, res) => {
   const verifyAuth = async (req, res, next) => {
     const user = await findUser('token', req.cookies?.[authCookieName]);
     
-    console.log("User Found (verifyAuth):", user); // Check if the user is found
-
     if (user) {
         next();
     } else {
-        console.log("Unauthorized request!"); // See if this is triggering
+        console.log("Unauthorized request!"); 
         res.status(401).send({ msg: 'Unauthorized' });
     }
   };
@@ -81,7 +79,6 @@ apiRouter.post('/auth/create', async (req, res) => {
 // Get all wallets (e.g., for leaderboard)
 apiRouter.get('/wallets', verifyAuth, async (_req, res) => {
   const highScores = await getHighScores();
-  console.log("Wallets:\n" + highScores[0].date);
   res.send(highScores);
 });
 
