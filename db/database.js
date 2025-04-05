@@ -1,12 +1,11 @@
-import { MongoClient } from 'mongodb';
-import config from './dbConfig.json' with { type: 'json' };
-import { user, wallet } from './models.js';
+const { MongoClient } = require('mongodb');
+const config = require('./dbConfig.json');
 
 const url = `mongodb+srv://${config.userName}:${config.password}@${config.hostname}`;
 const client = new MongoClient(url);
 const db = client.db('blackjack');
-const userCollection = client.connection('user');
-const walletCollection = client.connection('wallet');
+const userCollection = db.collection('user');
+const walletCollection = db.collection('wallet');
 
 (async function testConnection() {
   try {
@@ -50,3 +49,14 @@ function getUser(email) {
     const cursor = walletCollection.find(query, options);
     return cursor.toArray();
   }
+
+  module.exports = {
+    getUser,
+    getUserByToken,
+    updateToken,
+    addUser,
+    updateWallet,
+    getHighScores
+  };
+
+ // export { getUser, getUserByToken, updateToken, addUser, updateWallet, getHighScores };

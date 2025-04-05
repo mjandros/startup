@@ -1,9 +1,9 @@
-import { getUser, getUserByToken, updateToken, addUser, updateWallet, addWallet, getHighScores } from './database.js';
+const { getUser, getUserByToken, updateToken, addUser, updateWallet, getHighScores } = require('../db/database.js');
 
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
 const express = require('express');
-const uuid = require('uuid');
+const { v4: uuid } = require('uuid');
 const app = express();
 
 const authCookieName = 'token';
@@ -42,7 +42,7 @@ apiRouter.post('/auth/create', async (req, res) => {
     const user = await findUser('email', req.body.email);
     if (user) {
       if (await bcrypt.compare(req.body.password, user.password)) {
-        user.token = uuid.v4();
+        user.token = uuid();
         setAuthCookie(res, user.token);
         await updateToken({email: user.email, token: user.token});
         res.send({ email: user.email });
@@ -128,7 +128,7 @@ apiRouter.post('/wallet', verifyAuth, async (req, res) => {
     const user = {
       email: email,
       password: passwordHash,
-      token: uuid.v4(),
+      token: uuid(),
       wallet: 1000,
     };
     await addUser(user);
