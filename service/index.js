@@ -1,4 +1,4 @@
-const { getUser, getUserByToken, updateToken, addUser, updateWallet, getHighScores } = require('../db/database.js');
+const { getUser, getUserByToken, updateToken, addUser, updateWallet, getHighScores } = require('./database.js');
 
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
