@@ -13,6 +13,7 @@ export function BlackjackGame(props) {
    const [values, setValues] = React.useState([]);
    const [dealerValues, setDealerValues] = React.useState([]);
    const [total, setTotal] = React.useState(0);
+   const [aceTotal, setAceTotal] = React.useState("");
    const [dealerTotal, setDealerTotal] = React.useState(0);
    const [status, setStatus] = React.useState("Place wager");
    const [ready, setReady] = React.useState(false);
@@ -26,6 +27,7 @@ export function BlackjackGame(props) {
    const [playerCards, setPlayerCards] = React.useState([]);
    const [dealerCards, setDealerCards] = React.useState([]);
    const [dealerFirst, setDealerFirst] = React.useState("");
+   const [checkAce, setCheckAce] = React.useState(true);
 
    React.useEffect(() => {
     async function fetchWallet() {
@@ -43,11 +45,7 @@ export function BlackjackGame(props) {
     }
 
     fetchWallet();
-}, []); // Empty dependency array to run this effect only once on mount
-
-// if (wallet === null) {
-//     return <div>Loading...</div>; // Display loading message until wallet is fetched
-// }
+}, []);
 
   function updateValues(index, newVal) {
     setValues((prevValues) => {
@@ -56,6 +54,22 @@ export function BlackjackGame(props) {
         return updatedValues;
     });
   }
+
+  async function replaceValues(newVals) {
+    const updatedVals = [...newVals];
+    setValues(updatedVals);
+  }
+
+  // function replaceValue(index, newVal) {
+  //   const newVals = [];
+  //   values.forEach((element, i) => {
+  //     if (i == index) {
+  //       newVals.push(newVal);
+  //     } else {
+  //       newVals.push(element);
+  //     }
+  //   });
+  // }
 
   function updateDealerValues(index, newVal) {
     setDealerValues((prevValues) => {
@@ -107,13 +121,79 @@ export function BlackjackGame(props) {
     });
 }
 
-  function updateTotal() {
+  async function updateTotal(check = checkAce) {
+    if ((values.includes(1) || values.includes(11)) && check) {
+      await updateTotalWithAce();
+      return;
+    }
     let newTotal = 0;
     for (const val of values) {
         newTotal += val;
     }
     const updatedTotal = newTotal;
     setTotal(updatedTotal);
+  }
+
+  async function updateTotalWithAce() {
+    setCheckAce(false);
+    let possibles = getAllPossible();
+    const keysArray = Array.from(possibles.keys());
+    if (keysArray.length == 0) {
+      updateTotal(false);
+      return;
+    } else if (keysArray.length == 1) {
+      setAceTotal("");
+    }
+    const highest = keysArray[keysArray.length - 1];
+    const bestVals = possibles.get(highest);
+    await replaceValues(bestVals);
+  }
+
+  function getAllPossible() {
+    let hypoVals = [];
+    let possibles = new Map();
+    values.forEach(element => {
+      if (element == 11) {
+        hypoVals.push(1);
+      } else {
+        hypoVals.push(element);
+      }
+    });
+    let hypoTotal = 0;
+    hypoVals.forEach(element => {
+      hypoTotal += element;
+    });
+    possibles.set(hypoTotal, [...hypoVals]);
+    hypoVals.forEach((element, index) => {
+      if (element == 1) {
+        hypoVals[index] = 11;
+        hypoTotal = 0;
+        hypoVals.forEach(element => {
+          hypoTotal += element;
+        });
+        possibles.set(hypoTotal, [...hypoVals]);
+      }
+    });
+    const filtered = new Map(
+      [...possibles].filter(([key, value]) => key <= 21)
+    );
+    return filtered;
+  }
+
+  function updateAceTotal() {
+    let aceTotalStr = "";  
+    let possiblesMap = getAllPossible();
+    const possibles = Array.from(possiblesMap.keys());
+    possibles.forEach((element, index) => {
+      if (index == 0) {
+        aceTotalStr = element;
+      } else if (index != possibles.length - 1) {
+        aceTotalStr += ", " + element;
+      } else {
+        aceTotalStr += " or " + element;
+      }
+    });
+    setAceTotal(aceTotalStr);
   }
 
   function updateDealerTotal() {
@@ -154,6 +234,9 @@ export function BlackjackGame(props) {
 
   React.useEffect(() => {
     updateStatus("");
+    if (values.includes(1) || values.includes(11)) {
+      updateAceTotal();
+    }
   }, [total]);
 
   React.useEffect(() => {
@@ -163,11 +246,6 @@ export function BlackjackGame(props) {
   React.useEffect(() => {
     dealCard();
   }, [test]);
-
-  // React.useEffect(() => {
-  //   console.log(`id: ${id}`);
-  //   setDeck(id);
-  // }, [id]);
 
   React.useEffect(() => {
     if (test != "init") {
@@ -183,6 +261,7 @@ export function BlackjackGame(props) {
 
   React.useEffect(() => {
     if (status == "Dealer's turn") {
+        setAceTotal("");
         dealerTurn();
     }
   }, [status, dealerTotal]);
@@ -212,8 +291,6 @@ export function BlackjackGame(props) {
     GameNotifier.broadcastEvent(userName, GameEvent.Start, {name: userName, earnings: wager, date: date, won: won});
     setFirstTurn(true);
     shuffleDeck();
-    //setID(shuffleDeck());
-    //setDeck(id);
   }
 
 async function setUpGame() {
@@ -247,8 +324,6 @@ async function drawCard() {
         return;
     }
     updateNumCards();
-    //setCard(drawCard());
-    //await delay(500);
     const space = document.getElementById((currentNumCards).toString());
     if (space.classList.contains("empty")) {
         space.classList.replace("empty", "space");
@@ -266,10 +341,7 @@ async function drawCard() {
       setCard(drawCard());
       val = card.value;
     }
-
-    // while (!isValid(val)) {
-    //     val = getRandomValue();
-    // }
+    setCheckAce(true);
     updateValues(currentNumCards - 1, val);
     updatePlayerCards(currentNumCards - 1, card.image);
   }
@@ -494,7 +566,7 @@ async function drawCard() {
                     <p className="status">{status}</p>
                 </div>
                 <label htmlFor="total">Current Total:</label>
-                <input type="text" id="total" value={total} readOnly />                    
+                <input type="text" id="total" value={(values.includes(1) || values.includes(11)) && ((aceTotal + "").includes("or")) && (total !== 21) ? aceTotal : total} readOnly />                    
                 <br />
                 <div className="space" id="1">{playerCards[0]}</div>
                 <div className="space" id="2">{playerCards[1]}</div>
