@@ -511,7 +511,6 @@ async function drawCard() {
   }
 
   function endGame() {
-    setStatus("Place wager");
     const input = document.getElementById("wager");
     input.disabled = false;
     setReady(false);
@@ -555,7 +554,7 @@ async function drawCard() {
                         <span className="input-group-text">$</span>
                         <input type="text" id="wallet" value={wallet} readOnly />
                     </div>
-                    {wallet == 0 && status == "Place wager" && <button className="beg" onClick={beg}>Beg for money</button>}
+                    {wallet == 0 && (status !== "Your turn" && status !== "Dealer's turn") && <button className="beg" onClick={beg}>Beg for money</button>}
                 </section>
                 <section className="sub">
                     <Players userName={props.userName} />
@@ -566,9 +565,9 @@ async function drawCard() {
                                 <label htmlFor="wager">Your Wager:</label>
                                 <div className="input-group mb-3">
                                     <span className="input-group-text">$</span>
-                                    <input id="wager" type="number" min="1" max={wallet} defaultValue={wager} onChange={(e) => setWager(Number(e.target.value))} disabled={status != "Place wager"}/>
+                                    <input id="wager" type="number" min="1" max={wallet} defaultValue={wager} onChange={(e) => setWager(Number(e.target.value))} disabled={(status === "Your turn" || status === "Dealer's turn")}/>
                                 </div>
-                                <button onClick={placeWager} disabled={status != "Place wager"}>Place</button>
+                                <button onClick={placeWager} disabled={(status === "Your turn" || status === "Dealer's turn")}>Place</button>
                             </div>
                     </div>
                 </section>
