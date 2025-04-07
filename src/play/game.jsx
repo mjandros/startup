@@ -136,7 +136,7 @@ export function BlackjackGame(props) {
 
   async function updateTotalWithAce() {
     setCheckAce(false);
-    let possibles = getAllPossible();
+    let possibles = getAllPossible(values);
     const keysArray = Array.from(possibles.keys());
     if (keysArray.length == 0) {
       updateTotal(false);
@@ -149,7 +149,7 @@ export function BlackjackGame(props) {
     await replaceValues(bestVals);
   }
 
-  function getAllPossible() {
+  function getAllPossible(values) {
     let hypoVals = [];
     let possibles = new Map();
     values.forEach(element => {
@@ -182,7 +182,7 @@ export function BlackjackGame(props) {
 
   function updateAceTotal() {
     let aceTotalStr = "";  
-    let possiblesMap = getAllPossible();
+    let possiblesMap = getAllPossible(values);
     const possibles = Array.from(possiblesMap.keys());
     possibles.forEach((element, index) => {
       if (index == 0) {
@@ -196,13 +196,38 @@ export function BlackjackGame(props) {
     setAceTotal(aceTotalStr);
   }
 
-  function updateDealerTotal() {
+  async function updateDealerTotal(check = checkAce) {
+    console.log("start of updateDealerTotal: check = " + check);
+    if ((dealerValues.includes(1) || dealerValues.includes(11)) && check) {
+      await updateDealerTotalWithAce();
+      return;
+    }
     let newTotal = 0;
     for (const val of dealerValues) {
         newTotal += val;
     }
+    console.log("end of updateDealerTotal: total = " + newTotal + " with vals " + dealerValues);
     const updatedTotal = newTotal;
     setDealerTotal(updatedTotal);
+  }
+
+  async function updateDealerTotalWithAce() {
+    setCheckAce(false);
+    let possibles = getAllPossible(dealerValues);
+    const keysArray = Array.from(possibles.keys());
+    if (keysArray.length == 0) {
+      updateDealerTotal(false);
+      return;
+    }
+    const highest = keysArray[keysArray.length - 1];
+    const bestVals = possibles.get(highest);
+    console.log("changing total to " + highest + " with vals " + bestVals);
+    await replaceDealerValues(bestVals);
+  }
+
+  async function replaceDealerValues(newVals) {
+    const updatedVals = [...newVals];
+    setDealerValues(updatedVals);
   }
 
   function updateStatus(newStatus) {
@@ -283,9 +308,11 @@ export function BlackjackGame(props) {
   }
 
   async function startGame() {
+    console.log("------------------------------");
     if (!ready) {
         return;
     }
+    resetGame();
     setWon("");
     const date = new Date().toLocaleDateString();
     GameNotifier.broadcastEvent(userName, GameEvent.Start, {name: userName, earnings: wager, date: date, won: won});
@@ -366,6 +393,7 @@ async function drawCard() {
       setCard(drawCard());
       val = card.value;
     }
+    setCheckAce(true);
     updateDealerValues(currentNumDealerCards - 1, val);
     updateDealerCards(currentNumDealerCards - 1, card.image);
     if (currentNumDealerCards == 1) {
@@ -439,6 +467,7 @@ async function drawCard() {
   }
 
   async function dealerTurn() {
+    console.log("start of turn: total = " + dealerTotal + " with cards " + dealerValues);
     if (status != "Dealer's turn") {
         return;
     }
@@ -482,19 +511,25 @@ async function drawCard() {
   }
 
   function endGame() {
+    setStatus("Place wager");
     const input = document.getElementById("wager");
     input.disabled = false;
     setReady(false);
+    const date = new Date().toLocaleDateString();
+    GameNotifier.broadcastEvent(userName, GameEvent.End, {name: userName, earnings: earnings, date: date, won: won});
+  }
+
+  function resetGame() {
     for (let i = 1; i <= 11; i++) {
-        const card = document.getElementById(i.toString());
-        const dcard = document.getElementById("d" + i.toString());
-        if (card.classList.contains("card")) {
-            card.classList.replace("card", "empty");
-        }
-        if (dcard.classList.contains("card")) {
-            dcard.classList.replace("card", "empty");
-        }
-    }
+          const card = document.getElementById(i.toString());
+          const dcard = document.getElementById("d" + i.toString());
+          if (card.classList.contains("card")) {
+              card.classList.replace("card", "empty");
+          }
+          if (dcard.classList.contains("card")) {
+              dcard.classList.replace("card", "empty");
+          }
+      }
     setValues([0]);
     setDealerValues([0]);
     setNumCards(0);
@@ -503,8 +538,6 @@ async function drawCard() {
     setPlayerCards([]);
     setTotal(0);
     setDealerTotal(0);
-    const date = new Date().toLocaleDateString();
-    GameNotifier.broadcastEvent(userName, GameEvent.End, {name: userName, earnings: earnings, date: date, won: won});
   }
 
   function beg() {
