@@ -21,6 +21,10 @@ export function BlackjackGame(props) {
    const [wallet, setWallet] = React.useState(0);
    const [firstTurn, setFirstTurn] = React.useState(true);
    const [test, setTest] = React.useState("init");
+   const [setUpCounter, setSetUpCounter] = React.useState(0);
+   //const [dealt, setDealt] = React.useState(true);
+   //const [dealingTo, setDealingTo] = React.useState("");
+   const [setUp, setSetUp] = React.useState(false);
    const [earnings, setEarnings] = React.useState(0);
    const [won, setWon] = React.useState("");
    const [deck, setDeck] = React.useState("");
@@ -47,10 +51,11 @@ export function BlackjackGame(props) {
     fetchWallet();
 }, []);
 
-  function updateValues(index, newVal) {
+  async function updateValues(index, newVal) {
     setValues((prevValues) => {
         const updatedValues = [...prevValues];
         updatedValues[index] = newVal;
+        console.log(updatedValues);
         return updatedValues;
     });
   }
@@ -60,18 +65,7 @@ export function BlackjackGame(props) {
     setValues(updatedVals);
   }
 
-  // function replaceValue(index, newVal) {
-  //   const newVals = [];
-  //   values.forEach((element, i) => {
-  //     if (i == index) {
-  //       newVals.push(newVal);
-  //     } else {
-  //       newVals.push(element);
-  //     }
-  //   });
-  // }
-
-  function updateDealerValues(index, newVal) {
+  async function updateDealerValues(index, newVal) {
     setDealerValues((prevValues) => {
         const updatedValues = [...prevValues];
         updatedValues[index] = newVal;
@@ -79,7 +73,7 @@ export function BlackjackGame(props) {
     });
   }
 
-  function updateDealerCards(index, img) {
+  async function updateDealerCards(index, img) {
     setDealerCards((prevValues) => {
       let newVal = <img src={img} alt="Card" className="card-image"/>;
       if (index == 0) {
@@ -91,7 +85,7 @@ export function BlackjackGame(props) {
   });
   }
 
-  function updatePlayerCards(index, img) {
+  async function updatePlayerCards(index, img) {
     setPlayerCards((prevValues) => {
       let newVal = <img src={img} alt="Card" className="card-image"/>;
       const updatedValues = [...prevValues];
@@ -100,12 +94,18 @@ export function BlackjackGame(props) {
   });
   }
 
-  function updateNumCards() {
-    setNumCards(numCards + 1);
+  async function updateNumCards() {
+    setNumCards(prev => {
+      const updated = prev + 1;
+      return updated;
+    });
   }
 
-  function updateNumDealerCards() {
-    setNumDealerCards(numDealerCards + 1);
+  async function updateNumDealerCards() {
+    setNumDealerCards(prev => {
+      const updated = prev + 1;
+      return updated;
+    });
   }
 
   async function updateWallet(value) {
@@ -197,7 +197,6 @@ export function BlackjackGame(props) {
   }
 
   async function updateDealerTotal(check = checkAce) {
-    console.log("start of updateDealerTotal: check = " + check);
     if ((dealerValues.includes(1) || dealerValues.includes(11)) && check) {
       await updateDealerTotalWithAce();
       return;
@@ -206,7 +205,6 @@ export function BlackjackGame(props) {
     for (const val of dealerValues) {
         newTotal += val;
     }
-    console.log("end of updateDealerTotal: total = " + newTotal + " with vals " + dealerValues);
     const updatedTotal = newTotal;
     setDealerTotal(updatedTotal);
   }
@@ -221,7 +219,6 @@ export function BlackjackGame(props) {
     }
     const highest = keysArray[keysArray.length - 1];
     const bestVals = possibles.get(highest);
-    console.log("changing total to " + highest + " with vals " + bestVals);
     await replaceDealerValues(bestVals);
   }
 
@@ -278,6 +275,12 @@ export function BlackjackGame(props) {
     }
   }, [test]);
 
+  // React.useEffect(() => {
+  //   if (started) {
+  //     setUpGame();
+  //   }
+  // }, [started]);
+
   React.useEffect(() => {
     if (deck != "" && !(deck instanceof Promise)) {
       setUpGame();
@@ -293,9 +296,27 @@ export function BlackjackGame(props) {
 
   React.useEffect(() => {
     if (won != ""){
-        endGame();
+      endGame();
     }
   }, [won]);
+
+  React.useEffect(() => {
+    if (ready && !setUp) {
+      setUpGame();
+    }
+  }, [setUpCounter]);
+
+  // React.useEffect(() => {
+  //   if (dealerValues.length == 2) {
+  //     setSetUp(true);
+  //   }
+  // }, [dealerValues]);
+
+  // React.useEffect(() => {
+  //   if (!setUp && dealingTo != "") {
+  //     setUpGame();
+  //   }
+  // }, [dealt]);
 
   function placeWager() {
     if (wager > wallet || wager < 1) {
@@ -308,10 +329,13 @@ export function BlackjackGame(props) {
   }
 
   async function startGame() {
-    console.log("------------------------------");
     if (!ready) {
         return;
     }
+    //setDealingTo("Player");
+    //setStarted(false);
+    setSetUpCounter(0);
+    setSetUp(false);
     resetGame();
     setWon("");
     const date = new Date().toLocaleDateString();
@@ -321,10 +345,22 @@ export function BlackjackGame(props) {
   }
 
 async function setUpGame() {
-    dealCard();
-    dealDealerCard();
-    await delay(200);
-    setTest("go");
+  console.log("setUpCounter = " + setUpCounter);
+  if (setUpCounter < 2 && numCards < 2) {
+    await dealCard();
+  } else if (setUpCounter < 4 && numDealerCards < 2) {
+    await dealDealerCard();
+  } else {
+    setSetUp(true);
+  }
+  await updateSetUpCounter();
+}
+
+async function updateSetUpCounter() {
+  setSetUpCounter(prev => {
+    const updated = prev + 1;
+    return updated;
+  });
 }
 
 async function shuffleDeck() {
@@ -346,11 +382,14 @@ async function drawCard() {
     if (deck == "") {
       return;
     }
-    let currentNumCards = numCards + 1;
     if (!ready) {
         return;
     }
-    updateNumCards();
+    //setDealt(false);
+    console.log("dealing player card");
+    await updateNumCards();
+    const currentNumCards = numCards + 1;
+    console.log("numCards is now " + currentNumCards);
     const space = document.getElementById((currentNumCards).toString());
     if (space.classList.contains("empty")) {
         space.classList.replace("empty", "space");
@@ -365,18 +404,22 @@ async function drawCard() {
     } else if (Number(val) < 11 && Number(val) > 1) {
       val = Number(val);
     } else {
-      setCard(drawCard());
+      await setCard(drawCard());
       val = card.value;
     }
     setCheckAce(true);
-    updateValues(currentNumCards - 1, val);
-    updatePlayerCards(currentNumCards - 1, card.image);
+    await updateValues(currentNumCards - 1, val);
+    await updatePlayerCards(currentNumCards - 1, card.image);
+    console.log("player: " + val);
+    //setDealt(true);
   }
 
  async function dealDealerCard() {
-    let currentNumDealerCards = numDealerCards + 1;
-    updateNumDealerCards();
-    const space = document.getElementById("d" + (currentNumDealerCards).toString());
+    //setDealt(false);
+    console.log("dealing dealer card");
+    await updateNumDealerCards();
+    const currentNumCards = numDealerCards + 1;
+    const space = document.getElementById("d" + (currentNumCards).toString());
     if (space.classList.contains("empty")) {
         space.classList.replace("empty", "space");
     }
@@ -390,15 +433,17 @@ async function drawCard() {
     } else if (Number(val) < 11 && Number(val) > 1) {
       val = Number(val);
     } else {
-      setCard(drawCard());
+      await setCard(drawCard());
       val = card.value;
     }
     setCheckAce(true);
-    updateDealerValues(currentNumDealerCards - 1, val);
-    updateDealerCards(currentNumDealerCards - 1, card.image);
-    if (currentNumDealerCards == 1) {
+    await updateDealerValues(currentNumCards - 1, val);
+    await updateDealerCards(currentNumCards - 1, card.image);
+    if (currentNumCards == 1) {
       setDealerFirst(card.image);
     }
+    console.log("dealer: " + val);
+    //setDealt(true);
   }
 
   function getRandomValue() {
@@ -467,7 +512,6 @@ async function drawCard() {
   }
 
   async function dealerTurn() {
-    console.log("start of turn: total = " + dealerTotal + " with cards " + dealerValues);
     if (status != "Dealer's turn") {
         return;
     }
@@ -589,10 +633,10 @@ async function drawCard() {
                 <label htmlFor="total">Dealer's Total:</label>
                 <input type="text" id="total" value={status != "Your turn" ? dealerTotal : "--"} readOnly /> 
                 <div>
-                    {ready && <button onClick={hit}>Hit</button>}
-                    {ready && <button onClick={stand}>Stand</button>}
-                    {ready && firstTurn && <button onClick={doubleDown}>Double Down</button>}
-                    {ready && firstTurn && <button onClick={surrender}>Surrender</button>}
+                    {(ready && setUp) && <button onClick={hit}>Hit</button>}
+                    {(ready && setUp) && <button onClick={stand}>Stand</button>}
+                    {(ready && setUp) && firstTurn && <button onClick={doubleDown}>Double Down</button>}
+                    {(ready && setUp) && firstTurn && <button onClick={surrender}>Surrender</button>}
                 </div>
                 <div className="statusDiv">
                     <p className="status">{status}</p>
