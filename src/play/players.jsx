@@ -14,7 +14,7 @@ export function Players(props) {
     return () => {
       GameNotifier.removeHandler(handleGameEvent);
     };
-  }, []);
+  });
 
   function handleGameEvent(event) {
     setEvent((prevEvents) => {

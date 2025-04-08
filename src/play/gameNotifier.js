@@ -16,36 +16,52 @@ const GameEvent = {
     events = [];
     handlers = [];
 
-    start = false;
-    wager = Math.floor(Math.random() * 3000) + 1;
+    //start = false;
+    //wager = Math.floor(Math.random() * 3000) + 1;
   
     constructor() {
-      setInterval(() => {
-        const date = new Date().toLocaleDateString();
-        const userName = 'Don';
-        let earnings = 0;
-        let won = "won";
-        let type = GameEvent.End;
-        this.start = !this.start;
-        if (!this.start) {
-            type = GameEvent.End;
-            let outcome = "won";
-            let winnings = this.wager;
-            let rand = Math.random();
-            if (rand < 0.5) {
-                outcome = "lost";
-            } else if (rand < 0.6) {
-                winnings *= 1.5;
-            }
-            won = outcome;
-            earnings = winnings;
-        } else {
-            type = GameEvent.Start;
-            this.wager = Math.floor(Math.random() * 3000) + 1;
-            earnings = this.wager;
-        }
-            this.broadcastEvent(userName, type, { name: userName, earnings: earnings, date: date, won: won});
-        }, 5000);
+      let port = window.location.port;
+          const protocol = window.location.protocol === 'http:' ? 'ws' : 'wss';
+          this.socket = new WebSocket(`${protocol}://${window.location.hostname}:${port}/ws`);
+          this.socket.onopen = (event) => {
+            this.receiveEvent(new EventMessage('Blackjack', GameEvent.System, { msg: 'connected' }));
+          };
+          this.socket.onclose = (event) => {
+            this.receiveEvent(new EventMessage('Blackjack', GameEvent.System, { msg: 'disconnected' }));
+          };
+          this.socket.onmessage = async (msg) => {
+            try {
+              const event = JSON.parse(await msg.data.text());
+              this.receiveEvent(event);
+            } catch {}
+          };
+      //setInterval(() => {
+        
+        // const date = new Date().toLocaleDateString();
+        // const userName = 'Don';
+        // let earnings = 0;
+        // let won = "won";
+        // let type = GameEvent.End;
+        // this.start = !this.start;
+        // if (!this.start) {
+        //     type = GameEvent.End;
+        //     let outcome = "won";
+        //     let winnings = this.wager;
+        //     let rand = Math.random();
+        //     if (rand < 0.5) {
+        //         outcome = "lost";
+        //     } else if (rand < 0.6) {
+        //         winnings *= 1.5;
+        //     }
+        //     won = outcome;
+        //     earnings = winnings;
+        // } else {
+        //     type = GameEvent.Start;
+        //     this.wager = Math.floor(Math.random() * 3000) + 1;
+        //     earnings = this.wager;
+        // }
+       //     this.broadcastEvent(userName, type, { name: userName, earnings: earnings, date: date, won: won});
+     //   }, 5000);
     }
   
     broadcastEvent(from, type, value) {
