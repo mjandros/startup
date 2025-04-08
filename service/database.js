@@ -41,10 +41,13 @@ function getUser(email) {
   }
   
   function getHighScores() {
-    const query = { wallet: { $gt: 0} };
-    const options = {
+    const query = { 
+      wallet: { $gt: 0 },
+      date: { $ne: null }
+    };
+      const options = {
       sort: { wallet: -1 },
-      limit: 10,
+      limit: 5,
       //projection: { email: 1, wallet: 1, date: 1},
     };
     const cursor = userCollection.find(query, options);
