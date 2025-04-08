@@ -19,12 +19,17 @@ header {
 }
 
 .left {
-    flex: 1;
-    margin: 1em;
+    flex: 0.7;
     background: rgb(86, 89, 93) !important;
     border-radius: 5px;
-    padding: 0.5em;
     max-width: 100%;
+    min-height: 0px;
+    max-height: 100%;
+    direction: rtl;
+}
+
+.left > * {
+    direction: ltr;
 }
 
 .left, .right {
