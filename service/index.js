@@ -64,7 +64,7 @@ apiRouter.post('/auth/create', async (req, res) => {
   
   // Middleware to verify that the user is authorized to call an endpoint
   const verifyAuth = async (req, res, next) => {
-    const user = await findUser('token', req.cookies?.[authCookieName]);
+    const user = await findUser('token', req.cookies[authCookieName]);
     
     if (user) {
         next();

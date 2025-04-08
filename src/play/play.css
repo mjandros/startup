@@ -10,7 +10,7 @@ header {
 }
 
 .body {
-    background-color: green;
+    background-color: black;
     display: flex !important;
     flex-direction: column !important;
     min-width: 375px;

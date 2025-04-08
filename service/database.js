@@ -20,8 +20,9 @@ function getUser(email) {
     return userCollection.findOne({ email: email });
   }
   
-  function getUserByToken(token) {
-    return userCollection.findOne({ token: token });
+  async function getUserByToken(token) {
+    const user = await userCollection.findOne({ token: token })
+    return user;
   }
 
   async function updateToken(user) {
@@ -48,7 +49,6 @@ function getUser(email) {
       const options = {
       sort: { wallet: -1 },
       limit: 5,
-      //projection: { email: 1, wallet: 1, date: 1},
     };
     const cursor = userCollection.find(query, options);
     return results = cursor.toArray();
@@ -62,5 +62,3 @@ function getUser(email) {
     updateWallet,
     getHighScores
   };
-
- // export { getUser, getUserByToken, updateToken, addUser, updateWallet, getHighScores };

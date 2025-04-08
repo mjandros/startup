@@ -36,14 +36,15 @@ export function BlackjackGame(props) {
    React.useEffect(() => {
     async function fetchWallet() {
         try {
-            const response = await fetch('/api/wallet');
+            const response = await fetch('/api/wallet', {
+              credentials: 'include'
+            });
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             const data = await response.json();
-            setWallet(data.wallet); // Set wallet value from API
+            setWallet(data.wallet);
         } catch (error) {
-            setError(error.message); // Handle error (optional)
             console.error("Error fetching wallet:", error);
         }
     }
@@ -55,7 +56,6 @@ export function BlackjackGame(props) {
     setValues((prevValues) => {
         const updatedValues = [...prevValues];
         updatedValues[index] = newVal;
-        console.log(updatedValues);
         return updatedValues;
     });
   }
@@ -345,7 +345,6 @@ export function BlackjackGame(props) {
   }
 
 async function setUpGame() {
-  console.log("setUpCounter = " + setUpCounter);
   if (setUpCounter < 2 && numCards < 2) {
     await dealCard();
   } else if (setUpCounter < 4 && numDealerCards < 2) {
@@ -385,11 +384,8 @@ async function drawCard() {
     if (!ready) {
         return;
     }
-    //setDealt(false);
-    console.log("dealing player card");
     await updateNumCards();
     const currentNumCards = numCards + 1;
-    console.log("numCards is now " + currentNumCards);
     const space = document.getElementById((currentNumCards).toString());
     if (space.classList.contains("empty")) {
         space.classList.replace("empty", "space");
@@ -410,13 +406,9 @@ async function drawCard() {
     setCheckAce(true);
     await updateValues(currentNumCards - 1, val);
     await updatePlayerCards(currentNumCards - 1, card.image);
-    console.log("player: " + val);
-    //setDealt(true);
   }
 
  async function dealDealerCard() {
-    //setDealt(false);
-    console.log("dealing dealer card");
     await updateNumDealerCards();
     const currentNumCards = numDealerCards + 1;
     const space = document.getElementById("d" + (currentNumCards).toString());
@@ -442,8 +434,6 @@ async function drawCard() {
     if (currentNumCards == 1) {
       setDealerFirst(card.image);
     }
-    console.log("dealer: " + val);
-    //setDealt(true);
   }
 
   function getRandomValue() {
