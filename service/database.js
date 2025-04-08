@@ -37,10 +37,6 @@ function getUser(email) {
     await userCollection.updateOne({ email: user.email }, { $set: user });
   }
   
-  async function addWallet(wallet) {
-    return walletCollection.insertOne(wallet);
-  }
-  
   function getHighScores() {
     const query = { 
       wallet: { $gt: 0 },

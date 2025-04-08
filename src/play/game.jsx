@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { Button } from 'react-bootstrap';
 import { delay } from './delay';
 import { GameEvent, GameNotifier } from './gameNotifier';
 import { Players } from './players';
@@ -22,8 +21,6 @@ export function BlackjackGame(props) {
    const [firstTurn, setFirstTurn] = React.useState(true);
    const [test, setTest] = React.useState("init");
    const [setUpCounter, setSetUpCounter] = React.useState(0);
-   //const [dealt, setDealt] = React.useState(true);
-   //const [dealingTo, setDealingTo] = React.useState("");
    const [setUp, setSetUp] = React.useState(false);
    const [earnings, setEarnings] = React.useState(0);
    const [won, setWon] = React.useState("");
@@ -275,12 +272,6 @@ export function BlackjackGame(props) {
     }
   }, [test]);
 
-  // React.useEffect(() => {
-  //   if (started) {
-  //     setUpGame();
-  //   }
-  // }, [started]);
-
   React.useEffect(() => {
     if (deck != "" && !(deck instanceof Promise)) {
       setUpGame();
@@ -320,8 +311,6 @@ export function BlackjackGame(props) {
     if (!ready) {
         return;
     }
-    //setDealingTo("Player");
-    //setStarted(false);
     setSetUpCounter(0);
     setSetUp(false);
     resetGame();
