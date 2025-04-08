@@ -15,57 +15,31 @@ const GameEvent = {
   class GameEventNotifier {
     events = [];
     handlers = [];
-
-    //start = false;
-    //wager = Math.floor(Math.random() * 3000) + 1;
   
     constructor() {
-      let port = window.location.port;
-          const protocol = window.location.protocol === 'http:' ? 'ws' : 'wss';
-          this.socket = new WebSocket(`${protocol}://${window.location.hostname}:${port}/ws`);
-          this.socket.onopen = (event) => {
-            this.receiveEvent(new EventMessage('Blackjack', GameEvent.System, { msg: 'connected' }));
-          };
-          this.socket.onclose = (event) => {
-            this.receiveEvent(new EventMessage('Blackjack', GameEvent.System, { msg: 'disconnected' }));
-          };
-          this.socket.onmessage = async (msg) => {
-            try {
-              const event = JSON.parse(await msg.data.text());
-              this.receiveEvent(event);
-            } catch {}
-          };
-      //setInterval(() => {
-        
-        // const date = new Date().toLocaleDateString();
-        // const userName = 'Don';
-        // let earnings = 0;
-        // let won = "won";
-        // let type = GameEvent.End;
-        // this.start = !this.start;
-        // if (!this.start) {
-        //     type = GameEvent.End;
-        //     let outcome = "won";
-        //     let winnings = this.wager;
-        //     let rand = Math.random();
-        //     if (rand < 0.5) {
-        //         outcome = "lost";
-        //     } else if (rand < 0.6) {
-        //         winnings *= 1.5;
-        //     }
-        //     won = outcome;
-        //     earnings = winnings;
-        // } else {
-        //     type = GameEvent.Start;
-        //     this.wager = Math.floor(Math.random() * 3000) + 1;
-        //     earnings = this.wager;
-        // }
-       //     this.broadcastEvent(userName, type, { name: userName, earnings: earnings, date: date, won: won});
-     //   }, 5000);
+      this.maxEvents = 10;
+      const port = 4000;
+      const protocol = window.location.protocol === 'http:' ? 'ws' : 'wss';
+      this.socket = new WebSocket(`${protocol}://${window.location.hostname}:${port}/ws`);
+      this.socket.onmessage = async (msg) => {
+        try {
+          const event = JSON.parse(await msg.data.text());
+          this.receiveEvent(event);
+        } catch (error) {
+          console.error('Error processing message:', error);
+        }
+      };
+
+      this.socket.onerror = (error) => {
+        console.error('WebSocket error:', error);
+      };
     }
-  
+
     broadcastEvent(from, type, value) {
       const event = new EventMessage(from, type, value);
+      if (this.socket.readyState === WebSocket.OPEN) {
+        this.socket.send(JSON.stringify(event));
+      }
       this.receiveEvent(event);
     }
   
@@ -79,7 +53,6 @@ const GameEvent = {
   
     receiveEvent(event) {
       this.events.push(event);
-  
       this.handlers.forEach((handler) => {
         handler(event);
       });

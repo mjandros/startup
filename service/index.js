@@ -5,6 +5,8 @@ const bcrypt = require('bcryptjs');
 const express = require('express');
 const { v4: uuid } = require('uuid');
 const app = express();
+const { peerProxy } = require('./peerProxy.js');
+
 
 const authCookieName = 'token';
 
@@ -151,6 +153,8 @@ apiRouter.post('/wallet', verifyAuth, async (req, res) => {
     });
   }
 
-  app.listen(port, () => {
+  const httpService = app.listen(port, () => {
     console.log(`Listening on port ${port}`);
   });
+
+  peerProxy(httpService);
