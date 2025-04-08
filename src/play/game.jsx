@@ -306,18 +306,6 @@ export function BlackjackGame(props) {
     }
   }, [setUpCounter]);
 
-  // React.useEffect(() => {
-  //   if (dealerValues.length == 2) {
-  //     setSetUp(true);
-  //   }
-  // }, [dealerValues]);
-
-  // React.useEffect(() => {
-  //   if (!setUp && dealingTo != "") {
-  //     setUpGame();
-  //   }
-  // }, [dealt]);
-
   function placeWager() {
     if (wager > wallet || wager < 1) {
         return;
@@ -434,28 +422,6 @@ async function drawCard() {
     if (currentNumCards == 1) {
       setDealerFirst(card.image);
     }
-  }
-
-  function getRandomValue() {
-    return Math.floor(Math.random() * 10) + 1;
-  }
-
-  function isValid(val) {
-    let count = 0;
-    for (const num of values) {
-        if (num == val) {
-            count++;
-        }
-    }
-    for (const num of dealerValues) {
-        if (num == val) {
-            count++;
-        }
-    }
-    if (count >= 4) {
-        return false
-    }
-    return true;
   }
 
   function hit() {

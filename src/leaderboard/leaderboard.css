@@ -30,12 +30,23 @@ main {
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
+    width: 100%;
+    min-width: fit-content;
+    overflow: auto;
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 table {
-    width: 500px;
     background: lightgray;
     color: black;
+    min-width: fit-content;
+    width: 100%;
 }
 
 td {

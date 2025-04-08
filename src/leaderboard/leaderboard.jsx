@@ -34,7 +34,7 @@ export function Leaderboard() {
   }
   return (
     <main className="otherMain">
-            <table>
+            <table className="table-container">
                 <thead className='table-dark'>
                     <tr>
                         <th>#</th>

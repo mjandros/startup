@@ -1,3 +1,28 @@
+html, body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+#root {
+  width: 100%;
+  min-width: fit-content;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.otherMain {
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+  min-height: 100vh;
+}
+
 header {
     flex: 0 80px;
 }
@@ -7,22 +32,25 @@ p {
 }
 
 .body {
-    background-color: black;
-    display: flex;
-    flex-direction: column;
-    min-width: 375px;
+  background-color: black;
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 375px;
+  overflow: auto;
 }
 
 .title {
     color: white;
 }
 
+
 .otherMain {
-    flex: 1 calc(100vh - 110px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
+  flex: 1;
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+  min-width: fit-content;
+  overflow: auto;
 }
 
 main {
@@ -72,18 +100,4 @@ menu {
     float: left;
   }
   
-  @media (max-width: 768px) {
-    body {
-      font-size: 14px;
-      margin: 20px;
-    }
   
-    .nav {
-      flex-direction: column;
-    }
-  
-    .container {
-      width: 100%;
-      padding: 10px;
-    }
-  }

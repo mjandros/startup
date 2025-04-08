@@ -1,3 +1,5 @@
+
+
 header a {
     background-color: lightgray;
     border-radius: 5px;
@@ -17,21 +19,26 @@ header {
 }
 
 .left {
-    flex: 0.25 !important;
-    flex-shrink: 0;
+    flex: 1;
     margin: 1em;
     background: rgb(86, 89, 93) !important;
     border-radius: 5px;
     padding: 0.5em;
+    max-width: 100%;
+}
+
+.left, .right {
+    min-width: fit-content !important;
+    flex-shrink: 0 !important;
+    overflow: auto !important;
 }
 
 .right {
-    flex: 0.75;
-    flex-shrink: 0;
-    margin: 1em;
+    flex: 1;
     background: rgb(86, 89, 93) !important;
     border-radius: 5px;
-    padding: 0.5em;
+    min-height: 0px;
+    max-height: 100%;
 }
 
 .sub {
@@ -46,22 +53,25 @@ header {
     padding: 0.5em;
 }
 
-@media (orientation: portrait) {
+/* @media (orientation: portrait) {
     .playMain {
-      flex-direction: column !important;
+      display: flex;
+      flex-direction: row;
+      overflow-x: auto;
     }
-}
+} */
 
 h1 {
     text-align: center;
 }
 
 .playMain {
-    flex: 1 calc(100vh - 110px);
+    width: 100%;
+    min-width: fit-content;
+    overflow: auto;
     display: flex;
-    flex-direction: row !important;
-    justify-content: flex-start !important;
-    gap: 4em;
+    flex-direction: row;
+    flex-wrap: nowrap;
 }
 
 input {
